@@ -1,0 +1,10 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/charts_menu.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Select a Chart</h1>
+    <ul>
+        <li><a href="{{ url_for('charts.fluid_chart') }}">Fluid Chart</a></li>
+        <li><a href="{{ url_for('charts.food_chart') }}">Food Chart</a></li>
+    </ul>
+{% endblock %}

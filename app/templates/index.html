@@ -1,0 +1,8 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to the Care Records</h1>
+    <p>Please log in</p>
+    <li><a href="{{ url_for('login.login') }}">Login</a></li>
+{% endblock %}

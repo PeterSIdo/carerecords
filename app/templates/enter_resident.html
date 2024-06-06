@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Enter New Resident</h1>
+    <form method="POST">
+        <!-- Form fields for resident, unit_name, room_nr -->
+        <input type="text" name="resident" placeholder="Resident Name">
+        <input type="text" name="unit_name" placeholder="Unit Name">
+        <input type="text" name="room_nr" placeholder="Room Number">
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
