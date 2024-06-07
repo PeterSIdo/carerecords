@@ -5,11 +5,11 @@
     <h1>Admin Panel</h1>
     <p>Welcome to the admin panel.</p>
     <ul>
-        <li><a href="{{ url_for('admin.enter_resident') }}">Enter New Resident</a></li>
-        <li><a href="{{ url_for('admin.enter_service_list') }}">Enter Service List</a></li>
-        <li><a href="{{ url_for('admin.enter_fluid_list') }}">Enter Fluid List</a></li>
-        <li><a href="{{ url_for('admin.enter_food_list') }}">Enter Food List</a></li>
-        <li><a href="{{ url_for('admin.enter_care_list') }}">Enter Care List</a></li>
-        <li><a href="{{ url_for('admin.enter_bowel_list') }}">Enter Bowel List</a></li>
+        <li><a href="{{ url_for('main.enter_resident') }}">Enter New Resident</a></li>
+        <li><a href="{{ url_for('main.enter_service_list') }}">Update Service List</a></li>
+        <li><a href="{{ url_for('main.enter_fluid_list') }}">Update Fluid List</a></li>
+        <li><a href="{{ url_for('main.enter_food_list') }}">Update Food List</a></li>
+        <li><a href="{{ url_for('main.enter_care_list') }}">Update Care List</a></li>
+        <li><a href="{{ url_for('main.enter_bowel_list') }}">Update Bowel List</a></li>
     </ul>
 {% endblock %}
