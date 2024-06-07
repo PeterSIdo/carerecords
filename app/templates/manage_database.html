@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Manage Database</h1>
+    <form method="POST">
+        <div>
+            <label for="resident_name">Resident Name:</label>
+            <input type="text" id="resident_name" name="resident_name">
+        </div>
+        <div>
+            <label for="unit_name">Unit Name:</label>
+            <input type="text" id="unit_name" name="unit_name" >
+        </div>
+        <div>
+            <label for="room_nr">Room Number:</label>
+            <input type="number" id="room_nr" name="room_nr" >
+        </div>
+        <div>
+            <label for="service_list">Service List:</label>
+            <input type="text" id="service_list" name="service_list" >
+        </div>
+        <div>
+            <label for="fluid_list">Fluid List:</label>
+            <input type="text" id="fluid_list" name="fluid_list" >
+        </div>
+        <div>
+            <label for="food_list">Food List:</label>
+            <input type="text" id="food_list" name="food_list" >
+        </div>
+        <div>
+            <label for="care_list">Care List:</label>
+            <input type="text" id="care_list" name="care_list" >
+        </div>
+        <div>
+            <label for="bowel_list">Bowel List:</label>
+            <input type="text" id="bowel_list" name="bowel_list" >
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
