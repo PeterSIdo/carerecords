@@ -1,10 +1,11 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/enter_resident.html -->
 {% extends "base.html" %}
 
 {% block content %}
     <h1>Enter New Resident</h1>
     <form method="POST">
-        <!-- Form fields for resident, unit_name, room_nr -->
-        <input type="text" name="resident" placeholder="Resident Name (Initials)">
+        <input type="text" name="first_name" placeholder="First Name">
+        <input type="text" name="surname" placeholder="Surname">
         <input type="text" name="unit_name" placeholder="Unit Name">
         <input type="text" name="room_nr" placeholder="Room Number">
         <button type="submit">Submit</button>
