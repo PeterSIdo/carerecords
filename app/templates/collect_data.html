@@ -1,0 +1,13 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/collect_data.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Data Collection</h1>
+    <p>Resident Initials: {{ resident_initials }}</p>
+    <p>Service name: {{ service_name }}</p>
+    <form method="POST">
+        <!-- Add form fields for data collection here -->
+        <button type="submit">Submit Data</button>
+    </form>
+{% endblock %}

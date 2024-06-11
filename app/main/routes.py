@@ -1,5 +1,6 @@
 from flask import render_template, session, redirect, url_for, flash, request
 from app.main import bp
+from app.login.forms import LoginForm  # Import the LoginForm
 import sqlite3
 
 @bp.route('/')
@@ -7,13 +8,44 @@ def index():
     if 'logged_in' in session and session['logged_in']:
         username = session.get('username', 'Guest')
         return render_template('index.html', username=username)
-    return render_template('login.html')
+    else:
+        form = LoginForm()  # Create an instance of LoginForm
+        return render_template('login.html', form=form)  # Pass the form to the template
 
 @bp.route('/admin_panel')
 def admin_panel():
     if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'a':
         return render_template('admin_panel.html')
     return redirect(url_for('login.login'))
+
+
+@bp.route('/carer_input', methods=['GET', 'POST'])
+def carer_input():
+    if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'c':
+        print('Tu sme')
+        if request.method == 'POST':
+            resident_initials = request.form.get('resident_initials')
+            service_name = request.form.get('service_name')
+            
+            if not resident_initials or not service_name:
+                flash('Please enter resident initials and select a service.')
+                return redirect(url_for('main.carer_input'))
+            
+            # Redirect to data_collection blueprint with selected service
+            return redirect(url_for('data_collection.collect_data', resident_initials=resident_initials, service_name=service_name))
+        
+        # Fetch service list from the database
+        conn = sqlite3.connect('care4.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, service_name FROM service_list')
+        services = cursor.fetchall()
+        conn.close()
+        
+        return render_template('carer_input.html', services=services)
+    return redirect(url_for('login.login'))
+
+
+
 
 @bp.route('/enter_resident', methods=['GET', 'POST'])
 def enter_resident():
@@ -23,6 +55,17 @@ def enter_resident():
             surname = request.form.get('surname')
             unit_name = request.form.get('unit_name')
             room_nr = request.form.get('room_nr')
+
+            # Convert room_nr to an integer
+            try:
+                room_nr = int(room_nr)
+            except ValueError:
+                flash('Room number must be an integer.')
+                return redirect(url_for('main.enter_resident'))
+            
+            # Calculate resident initials
+            initials = first_name[0].upper() + surname[0].upper()
+            resident_initials = f"{unit_name}{room_nr:02d}{initials}"
 
             # Connect to the database
             conn = sqlite3.connect('care4.db')
@@ -34,11 +77,12 @@ def enter_resident():
                                 first_name TEXT, 
                                 surname TEXT, 
                                 unit_name TEXT, 
-                                room_nr INTEGER)''')
+                                room_nr INTEGER,
+                                resident_initials TEXT)''')
 
             # Insert data into the table
-            cursor.execute('INSERT INTO residents (first_name, surname, unit_name, room_nr) VALUES (?, ?, ?, ?)', 
-                           (first_name, surname, unit_name, room_nr))
+            cursor.execute('INSERT INTO residents (first_name, surname, unit_name, room_nr, resident_initials) VALUES (?, ?, ?, ?, ?)', 
+                           (first_name, surname, unit_name, room_nr, resident_initials))
 
             # Commit changes and close connection
             conn.commit()
@@ -52,6 +96,7 @@ def enter_resident():
 
 
 
+# Code bellow this line is NOT in Use 
 
 @bp.route('/enter_service_list', methods=['GET', 'POST'])
 def enter_service_list():

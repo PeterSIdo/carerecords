@@ -1,0 +1,21 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/carer_input.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Carer Input</h1>
+    <form method="POST">
+        <div>
+            <label for="resident_initials">Resident Initials:</label>
+            <input type="text" id="resident_initials" name="resident_initials" required>
+        </div>
+        <div>
+            <label for="service_name">Select Service:</label>
+            <select id="service_name" name="service_name" required>
+                {% for service in services %}
+                    <option value="{{ service[1] }}">{{ service[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

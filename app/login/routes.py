@@ -19,7 +19,7 @@ def login():
             if user_mode == 'a': 
                 return redirect(url_for('main.admin_panel'))
             if user_mode == 'c':
-                return redirect(url_for('charts.charts_menu'))
+                return redirect(url_for('main.carer_input'))
         else:
             flash('Invalid username or password')
     return render_template('login.html', form=form)
