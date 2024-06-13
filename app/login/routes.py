@@ -20,7 +20,7 @@ def login():
                 return redirect(url_for('main.admin_panel'))
             if user_mode == 'c':
                 return redirect(url_for('main.carer_input'))
-            # carare_input
+            # carer_input
         else:
             flash('Invalid username or password')
     return render_template('login.html', form=form)

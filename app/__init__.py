@@ -1,12 +1,15 @@
 # c:/Users/Peter/Documents/Care-Home-4/app/__init__.py
-from flask import Flask, session
+from flask import Flask, session,render_template
 from config import Config
 from datetime import datetime
+from flask_bootstrap import Bootstrap5
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
+    Bootstrap5(app)  # Initialize Flask-Bootstrap
+        
     @app.before_request
     def set_current_time():
         session['current_time'] = datetime.now()
@@ -22,8 +25,5 @@ def create_app(config_class=Config):
 
     from app.charts import bp as charts_bp
     app.register_blueprint(charts_bp)
-
-    from app.dashboards import bp as dashboards_bp
-    app.register_blueprint(dashboards_bp)
 
     return app
