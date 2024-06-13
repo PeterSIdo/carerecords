@@ -22,7 +22,7 @@ def admin_panel():
 @bp.route('/carer_input', methods=['GET', 'POST'])
 def carer_input():
     if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'c':
-        print('Tu sme')
+       
         if request.method == 'POST':
             resident_initials = request.form.get('resident_initials')
             service_name = request.form.get('service_name')

@@ -1,13 +1,13 @@
 <!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/collect_data.html -->
-
 {% extends "base.html" %}
 
 {% block content %}
     <h1>Data Collection</h1>
     <p>Resident Initials: {{ resident_initials }}</p>
     <p>Service name: {{ service_name }}</p>
-    <form method="POST">
-        <!-- Add form fields for data collection here -->
+    <form method="POST" action="{{ url_for('data_collection.data_collection_logic') }}">
+        <input type="hidden" name="resident_initials" value="{{ resident_initials }}">
+        <input type="hidden" name="service_name" value="{{ service_name }}">
         <button type="submit">Submit Data</button>
     </form>
 {% endblock %}

@@ -1,7 +1,30 @@
-<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/fluid_chart.html -->
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/fluid_intake_form.html -->
 {% extends "base.html" %}
 
 {% block content %}
     <h1>Fluid Intake Form</h1>
-    <p>This is the Fluid Intake Form.</p>
+    <form method="POST" action="{{ url_for('data_collection.submit_fluid_intake') }}">
+        <input type="hidden" name="resident_initials" value="{{ request.args.get('resident_initials') }}">
+        <div>
+            <label for="fluid_type">Fluid Type:</label>
+            <select id="fluid_type" name="fluid_type" required>
+                {% for fluid in fluid_list %}
+                    <option value="{{ fluid[1] }}">{{ fluid[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="fluid_volume">Fluid Volume (ml):</label>
+            <input type="number" id="fluid_volume" name="fluid_volume" required>
+        </div>
+        <div>
+            <label for="fluid_note">Note:</label>
+            <textarea id="fluid_note" name="fluid_note"></textarea>
+        </div>
+        <div>
+            <p>Enter fluid vloume '0' if refused</p>
+            <p>Record 'refused' in Note tab</p>
+        </div>    
+        <button type="submit">Submit</button>
+    </form>
 {% endblock %}
