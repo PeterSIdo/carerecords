@@ -2,6 +2,7 @@ from flask import render_template, session, redirect, url_for, flash, request
 from app.main import bp
 from app.login.forms import LoginForm  # Import the LoginForm
 import sqlite3
+from app.decorators import login_required
 
 @bp.route('/')
 def index():
@@ -11,6 +12,12 @@ def index():
     else:
         form = LoginForm()  # Create an instance of LoginForm
         return render_template('login.html', form=form)  # Pass the form to the template
+
+@bp.route('/logout')
+def logout():
+    session.clear()  # Clear all session data
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('login.login'))
 
 @bp.route('/admin_panel')
 def admin_panel():
