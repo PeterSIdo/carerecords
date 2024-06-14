@@ -19,31 +19,44 @@ def admin_panel():
     return redirect(url_for('login.login'))
 
 
+# c:/Users/Peter/Documents/Care-Home-4/app/main/routes.py
+
 @bp.route('/carer_input', methods=['GET', 'POST'])
 def carer_input():
     if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'c':
-       
         if request.method == 'POST':
+            unit_name = request.form.get('unit_name')
             resident_initials = request.form.get('resident_initials')
             service_name = request.form.get('service_name')
             
-            if not resident_initials or not service_name:
-                flash('Please enter resident initials and select a service.')
+            if not unit_name or not resident_initials or not service_name:
+                flash('Please enter unit name, resident initials, and select a service.')
                 return redirect(url_for('main.carer_input'))
             
             # Redirect to data_collection blueprint with selected service
-            return redirect(url_for('data_collection.collect_data', resident_initials=resident_initials, service_name=service_name))
+            return redirect(url_for('data_collection.collect_data', unit_name=unit_name, resident_initials=resident_initials, service_name=service_name))
         
-        # Fetch service list from the database
+        # Fetch service list and unit list from the database
         conn = sqlite3.connect('care4.db')
         cursor = conn.cursor()
         cursor.execute('SELECT id, service_name FROM service_list')
         services = cursor.fetchall()
+        cursor.execute('SELECT DISTINCT unit_name FROM units')  # Updated query
+        units = cursor.fetchall()
         conn.close()
         
-        return render_template('carer_input.html', services=services)
+        return render_template('carer_input.html', services=services, units=units)
     return redirect(url_for('login.login'))
 
+@bp.route('/get_residents', methods=['GET'])
+def get_residents():
+    unit_name = request.args.get('unit_name')
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT resident_initials FROM residents WHERE unit_name = ?', (unit_name,))
+    residents = cursor.fetchall()
+    conn.close()
+    return {'residents': [resident[0] for resident in residents]}
 
 
 

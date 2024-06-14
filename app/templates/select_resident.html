@@ -1,0 +1,26 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/select_resident.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Select Resident</h1>
+    <form method="POST" action="{{ url_for('data_collection.data_collection_logic') }}">
+        <input type="hidden" name="unit_name" value="{{ unit_name }}">
+        <div>
+            <label for="resident_initials">Resident Initials:</label>
+            <select id="resident_initials" name="resident_initials" required>
+                {% for resident in residents %}
+                    <option value="{{ resident[0] }}">{{ resident[0] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="service_name">Select Service:</label>
+            <select id="service_name" name="service_name" required>
+                {% for service in services %}
+                    <option value="{{ service[1] }}">{{ service[1] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

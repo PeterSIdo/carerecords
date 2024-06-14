@@ -10,27 +10,50 @@ def collect_data():
     service_name = request.args.get('service_name')
     return render_template('collect_data.html', resident_initials=resident_initials, service_name=service_name)
 
+@bp.route('/select_unit')
+def select_unit():
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT DISTINCT unit_name FROM units')
+    units = cursor.fetchall()
+    conn.close()
+    return render_template('select_unit.html', units=units)
+
+
+@bp.route('/select_resident', methods=['POST'])
+def select_resident():
+    unit_name = request.form.get('unit_name')
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT resident_initials FROM residents WHERE unit_name = ?', (unit_name,))
+    residents = cursor.fetchall()
+    conn.close()
+    return render_template('select_resident.html', residents=residents, unit_name=unit_name)
+
+# c:/Users/Peter/Documents/Care-Home-4/app/data_collection/routes.py
 
 @bp.route('/data_collection_logic', methods=['POST'])
 def data_collection_logic():
+    unit_name = request.form.get('unit_name')
     resident_initials = request.form.get('resident_initials')
     service_name = request.form.get('service_name')
     if service_name == 'fluid intake':
-        return redirect(url_for('data_collection.fluid_intake', resident_initials=resident_initials))
+        return redirect(url_for('data_collection.fluid_intake', unit_name=unit_name, resident_initials=resident_initials))
     elif service_name == 'food intake':
-        return redirect(url_for('data_collection.food_intake', resident_initials=resident_initials))
+        return redirect(url_for('data_collection.food_intake', unit_name=unit_name, resident_initials=resident_initials))
     else:
-            return redirect(url_for('data_collection.collect_data'))
+        return redirect(url_for('data_collection.collect_data'))
 
 @bp.route('/fluid_intake')
 def fluid_intake():
+    unit_name = request.args.get('unit_name')
     resident_initials = request.args.get('resident_initials')
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
     cursor.execute('SELECT id, fluid_name FROM fluid_list')
     fluid_list = cursor.fetchall()
     conn.close()
-    return render_template('fluid_intake_form.html', fluid_list=fluid_list, resident_initials=resident_initials)
+    return render_template('fluid_intake_form.html', fluid_list=fluid_list, unit_name=unit_name, resident_initials=resident_initials)
 
 @bp.route('/submit_fluid_intake', methods=['POST'])
 def submit_fluid_intake():

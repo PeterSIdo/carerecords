@@ -5,8 +5,19 @@
     <h1>Carer Input</h1>
     <form method="POST">
         <div>
+            <label for="unit_name">Unit Name:</label>
+            <select id="unit_name" name="unit_name" required onchange="fetchResidents()">
+                <option value="">Select Unit</option>
+                {% for unit in units %}
+                    <option value="{{ unit[0] }}">{{ unit[0] }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
             <label for="resident_initials">Resident Initials:</label>
-            <input type="text" id="resident_initials" name="resident_initials" required>
+            <select id="resident_initials" name="resident_initials" required>
+                <option value="">Select Resident</option>
+            </select>
         </div>
         <div>
             <label for="service_name">Select Service:</label>
@@ -18,4 +29,25 @@
         </div>
         <button type="submit">Submit</button>
     </form>
+
+    <script>
+        function fetchResidents() {
+            const unitName = document.getElementById('unit_name').value;
+            const residentSelect = document.getElementById('resident_initials');
+            residentSelect.innerHTML = '<option value="">Select Resident</option>'; // Clear previous options
+
+            if (unitName) {
+                fetch(`{{ url_for('main.get_residents') }}?unit_name=${unitName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.residents.forEach(resident => {
+                            const option = document.createElement('option');
+                            option.value = resident;
+                            option.textContent = resident;
+                            residentSelect.appendChild(option);
+                        });
+                    });
+            }
+        }
+    </script>
 {% endblock %}

@@ -4,6 +4,7 @@
 {% block content %}
     <h1>Fluid Intake Form</h1>
     <form method="POST" action="{{ url_for('data_collection.submit_fluid_intake') }}">
+        <input type="hidden" name="unit_name" value="{{ request.args.get('unit_name') }}">
         <input type="hidden" name="resident_initials" value="{{ request.args.get('resident_initials') }}">
         <div>
             <label for="fluid_type">Fluid Type:</label>
@@ -22,7 +23,7 @@
             <textarea id="fluid_note" name="fluid_note"></textarea>
         </div>
         <div>
-            <p>Enter fluid vloume '0' if refused</p>
+            <p>Enter fluid volume '0' if refused</p>
             <p>Record 'refused' in Note tab</p>
         </div>    
         <button type="submit">Submit</button>
