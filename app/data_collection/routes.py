@@ -3,7 +3,7 @@ from flask import render_template, request, redirect, url_for, flash, session
 from app.data_collection import bp
 import sqlite3
 from datetime import datetime
-from app.decorators import login_required
+from app.login_check import login_required
 
 @bp.route('/collect_data')
 @login_required()

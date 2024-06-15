@@ -3,10 +3,10 @@
 
 {% block content %}
     <h1>Fluid Intake Form</h1>
-    <form method="POST" action="{{ url_for('data_collection.submit_fluid_intake') }}">
+    <form method="POST" action="{{ url_for('data_collection.submit_fluid_intake') }}" class="form-container">
         <input type="hidden" name="unit_name" value="{{ request.args.get('unit_name') }}">
         <input type="hidden" name="resident_initials" value="{{ request.args.get('resident_initials') }}">
-        <div>
+        <div class="form-group">
             <label for="fluid_type">Fluid Type:</label>
             <select id="fluid_type" name="fluid_type" required>
                 {% for fluid in fluid_list %}
@@ -14,15 +14,15 @@
                 {% endfor %}
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <label for="fluid_volume">Fluid Volume (ml):</label>
-            <input type="number" id="fluid_volume" name="fluid_volume" required>
+            <input type="number" id="fluid_volume" name="fluid_volume" class="no-spinner" required>
         </div>
-        <div>
+        <div class="form-group">
             <label for="fluid_note">Note:</label>
             <textarea id="fluid_note" name="fluid_note"></textarea>
         </div>
-        <div>
+        <div class="form-group">
             <p>Enter fluid volume '0' if refused</p>
             <p>Record 'refused' in Note tab</p>
         </div>    

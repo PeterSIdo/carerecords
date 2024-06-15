@@ -2,7 +2,7 @@ from flask import render_template, session, redirect, url_for, flash, request
 from app.main import bp
 from app.login.forms import LoginForm  # Import the LoginForm
 import sqlite3
-from app.decorators import login_required
+from app.login_check import login_required
 
 @bp.route('/')
 def index():
@@ -20,10 +20,9 @@ def logout():
     return redirect(url_for('login.login'))
 
 @bp.route('/admin_panel')
+@login_required(user_mode='a')  # Apply the login_required decorator
 def admin_panel():
-    if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'a':
-        return render_template('admin_panel.html')
-    return redirect(url_for('login.login'))
+    return render_template('admin_panel.html')
 
 
 # c:/Users/Peter/Documents/Care-Home-4/app/main/routes.py

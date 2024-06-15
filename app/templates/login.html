@@ -1,22 +1,22 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/login.html -->
 {% extends "base.html" %}
 
 {% block content %}
-
-<form method="POST" action="{{ url_for('login.login') }}">
-  {{ form.hidden_tag() }}
-  <p>
-    {{ form.user_mode.label }}<br>
-    {{ form.user_mode() }}<br>
-  </p>
-  <p>
-    {{ form.username.label }}<br>
-    {{ form.username(size=32) }}<br>
-  </p>
-  <p>
-    {{ form.password.label }}<br>
-    {{ form.password(size=32) }}<br>
-  </p>
-  <p>{{ form.submit() }}</p>
-</form>
-
+    <h1>Login</h1>
+    <form method="POST" action="{{ url_for('login.login') }}" class="form-container">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="user_mode">{{ form.user_mode.label }}</label>
+            {{ form.user_mode(class="form-control") }}
+        </div>
+        <div class="form-group">
+            <label for="username">{{ form.username.label }}</label>
+            {{ form.username(class="form-control", size=32) }}
+        </div>
+        <div class="form-group">
+            <label for="password">{{ form.password.label }}</label>
+            {{ form.password(class="form-control", size=32) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
 {% endblock %}

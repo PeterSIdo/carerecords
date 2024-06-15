@@ -26,6 +26,13 @@
             margin: 0 auto;
             width: 50%; /* Adjust the width as needed */
         }
+        .flash-amber {
+            color: white;
+            background-color: #FFC107;  /* Amber */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #FFC107;  
+        }
         .btn-amber {
             background-color: #FFC107;
             color: white;
@@ -34,6 +41,61 @@
             display: flex;
             justify-content: center;
             gap: 10px; /* Padding between buttons */
+        }
+
+        /* Form container styling */
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        /* Form group styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* Label styling */
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Input, select, and textarea styling */
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        /* Button styling */
+        button[type="submit"] {
+            background-color: #006400;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #004d00;
+        }
+
+        /* Hide the spinner controls for number input fields */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield; /* Firefox */
         }
     </style>
 </head>
@@ -114,8 +176,6 @@
                 }, 5000);
             });
         });
-        </script>
-
-
+    </script>
 </body>
 </html>

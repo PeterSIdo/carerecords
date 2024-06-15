@@ -3,8 +3,8 @@
 
 {% block content %}
     <h1>Carer Input</h1>
-    <form method="POST">
-        <div>
+    <form method="POST" action="{{ url_for('main.carer_input') }}" class="form-container">
+        <div class="form-group">
             <label for="unit_name">Unit Name:</label>
             <select id="unit_name" name="unit_name" required onchange="fetchResidents()">
                 <option value="">Select Unit</option>
@@ -13,13 +13,13 @@
                 {% endfor %}
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <label for="resident_initials">Resident Initials:</label>
             <select id="resident_initials" name="resident_initials" required>
                 <option value="">Select Resident</option>
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <label for="service_name">Select Service:</label>
             <select id="service_name" name="service_name" required>
                 {% for service in services %}
