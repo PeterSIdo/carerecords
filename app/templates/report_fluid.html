@@ -1,0 +1,30 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/reports.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>Report Fluid Intake</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Resident</th>
+                <th>Date/Time</th>
+                <th>Fluid</th>
+                <th>Volume(ml))</th>
+                <th>Note</th>
+                <!-- Add more columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <!-- Add more columns as needed -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
