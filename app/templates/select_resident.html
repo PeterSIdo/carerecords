@@ -9,7 +9,7 @@
             <label for="resident_initials">Resident Initials:</label>
             <select id="resident_initials" name="resident_initials" required>
                 {% for resident in residents %}
-                    <option value="{{ resident[0] }}">{{ resident[0] }}</option>
+                    <option value="{{ resident[0] }}" data-first-name="{{ resident[1] }}">{{ resident[0] }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -21,6 +21,14 @@
                 {% endfor %}
             </select>
         </div>
+        <input type="hidden" name="first_name" id="first_name">
         <button type="submit">Submit</button>
     </form>
+
+    <script>
+        document.getElementById('resident_initials').addEventListener('change', function() {
+            var selectedOption = this.options[this.selectedIndex];
+            document.getElementById('first_name').value = selectedOption.getAttribute('data-first-name');
+        });
+    </script>
 {% endblock %}

@@ -2,14 +2,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Data Collection</h1>
-    <p>Unit Name: {{ unit_name }}</p>
-    <p>Resident Initials: {{ resident_initials }}</p>
-    <p>Service name: {{ service_name }}</p>
-    <form method="POST" action="{{ url_for('data_collection.data_collection_logic') }}">
-        <input type="hidden" name="unit_name" value="{{ unit_name }}">
-        <input type="hidden" name="resident_initials" value="{{ resident_initials }}">
-        <input type="hidden" name="service_name" value="{{ service_name }}">
-        <button type="submit">Continue</button>
-    </form>
+    <h2 class="center-text">Data Collection</h2>
+    <div class="form-container">
+        <div class="form-group">
+            <p>Unit: {{ unit_name }}</p>
+            <p>Resident Initials: {{ resident_initials }}</p>
+            <p>Service: {{ service_name }}</p>
+        </div>
+    
+        <form method="POST" action="{{ url_for('data_collection.data_collection_logic') }}">
+            <input type="hidden" name="unit_name" value="{{ unit_name }}">
+            <input type="hidden" name="resident_initials" value="{{ resident_initials }}">
+            <input type="hidden" name="first_name" value="{{ first_name }}">
+            <input type="hidden" name="service_name" value="{{ service_name }}">
+            <!-- Add other form fields as needed -->
+            <button type="submit">Continue</button>
+        </form>
+    </div>
 {% endblock %}

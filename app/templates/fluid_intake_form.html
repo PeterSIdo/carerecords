@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Fluid Intake Form</h1>
+    <h2>Fluid Intake Form</h2>
     <form method="POST" action="{{ url_for('data_collection.submit_fluid_intake') }}" class="form-container">
         <input type="hidden" name="unit_name" value="{{ request.args.get('unit_name') }}">
         <input type="hidden" name="resident_initials" value="{{ request.args.get('resident_initials') }}">
@@ -16,16 +16,12 @@
         </div>
         <div class="form-group">
             <label for="fluid_volume">Fluid Volume (ml):</label>
-            <input type="number" id="fluid_volume" name="fluid_volume" class="no-spinner" required>
+            <input type="number" id="fluid_volume" name="fluid_volume" class="no-spinner" required placeholder = "Enter '0' if refused">
         </div>
         <div class="form-group">
             <label for="fluid_note">Note:</label>
-            <textarea id="fluid_note" name="fluid_note"></textarea>
+            <textarea id="fluid_note" name="fluid_note" placeholder="Refused/Asleep"></textarea>
         </div>
-        <div class="form-group">
-            <p>Enter fluid volume '0' if refused</p>
-            <p>Record 'refused' in Note tab</p>
-        </div>    
         <button type="submit">Submit</button>
     </form>
 {% endblock %}

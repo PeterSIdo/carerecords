@@ -2,23 +2,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Report Selection</h1>
-    <form method="POST" action="{{ url_for('reports.report_selection') }}">
-        <div>
+    <h1 class="center-text">Report Selection</h1>
+    <form method="POST" action="{{ url_for('reports.report_selection') }}" class="form-container">
+        <div class="form-group">
             <label for="unit_name">Unit Name:</label>
             <select id="unit_name" name="unit_name" required>
+                <option value="">Select Unit</option>
                 {% for unit in units %}
                     <option value="{{ unit[0] }}">{{ unit[0] }}</option>
                 {% endfor %}
             </select>
         </div>
-        <div>
+        <div class="form-group">
             <label for="resident_initials">Resident Initials:</label>
-            <input type="text" id="resident_initials" name="resident_initials" required>
+            <select id="resident_initials" name="resident_initials" required>
+                <option value="">Select Resident</option>
+            </select>
         </div>
-        <div>
+        <div class="form-group">
             <label for="service_name">Select Service:</label>
             <select id="service_name" name="service_name" required>
+                <option value="">Select Service</option>
                 {% for service in services %}
                     <option value="{{ service[1] }}">{{ service[1] }}</option>
                 {% endfor %}
@@ -26,4 +30,26 @@
         </div>
         <button type="submit">Continue</button>
     </form>
+    <script>
+        function fetchResidents() {
+            const unitName = document.getElementById('unit_name').value;
+            const residentSelect = document.getElementById('resident_initials');
+            residentSelect.innerHTML = '<option value="">Select Resident</option>'; // Clear previous options
+    
+            if (unitName) {
+                fetch(`{{ url_for('main.get_residents') }}?unit_name=${unitName}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.residents.forEach(resident => {
+                            const option = document.createElement('option');
+                            option.value = resident;
+                            option.textContent = resident;
+                            residentSelect.appendChild(option);
+                        });
+                    });
+            }
+        }
+    
+        document.getElementById('unit_name').addEventListener('change', fetchResidents);
+    </script>
 {% endblock %}
