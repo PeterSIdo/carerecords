@@ -1,3 +1,4 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,9 +43,9 @@
             gap: 10px; /* Padding between buttons */
         }
         .header-buttons .btn {
-            padding: 5px 10px; /* Adjust padding to make buttons smaller */
+            padding: 2px 5px; /* Adjust padding to make buttons smaller */
             border-radius: 2px; /* Make buttons rectangular */
-            font-size: 14px; /* Adjust font size if necessary */
+            font-size: 12px; /* Adjust font size if necessary */
         }
 
         /* Form container styling */
@@ -143,11 +144,13 @@
             <div class="header-buttons">
                 <button class="btn btn-secondary" onclick="history.back()">← Back</button>
                 <a href="{{ url_for('login.login') }}" class="btn btn-secondary">Back to Login</a>
-                <a href="{{ url_for('main.logout') }}" class="btn btn-amber">Logout</a>
+
                 <!-- Back to Menu Button -->
                 {% if session.user_mode == 'c' %}
                     <a href="{{ url_for('main.carer_menu') }}" class="btn btn-secondary">Back to Menu</a>
                 {% endif %}
+                <!--Logout button-->
+                <a href="{{ url_for('main.logout') }}" class="btn btn-amber">Logout</a>
             </div>
         {% else %}
             <p>Welcome Guest | <span id="current-time"></span></p>
@@ -191,13 +194,8 @@
     }
 
     // Update the time every second
-    setInterval(updateTime, 60000);
-    // Initial call to display the time immediately
-    updateTime();
+    setInterval(updateTime, 1000);
+    updateTime(); // Initial call to set the time immediately
     </script>
-
-    <script>
-        // Wait for the DOM to be loaded
-        document.addEventListener("DOMContentLoaded", function() {
 </body>
 </html>
