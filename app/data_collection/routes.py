@@ -66,7 +66,8 @@ def submit_fluid_intake():
     fluid_type = request.form.get('fluid_type')
     fluid_volume = request.form.get('fluid_volume')
     fluid_note = request.form.get('fluid_note')
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    input_time = request.form.get('input_time')  # Retrieve input_time from the form data
+    timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
 
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
