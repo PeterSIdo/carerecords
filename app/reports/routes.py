@@ -59,6 +59,7 @@ def report_fluid():
     cursor.execute('''
         SELECT * FROM fluid_chart 
         WHERE resident_initials = ?
+        ORDER BY timestamp ASC
     ''', (resident_initials,))
     data = cursor.fetchall()
     conn.close()
@@ -67,7 +68,7 @@ def report_fluid():
     formatted_data = []
     for row in data:
         row = list(row)
-        row[2] = datetime.strptime(row[2], '%Y-%m-%d %H:%M:%S')  # Adjust format as needed
+        row[2] = datetime.strptime(row[2], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')  # Format without seconds
         formatted_data.append(row)
 
     return render_template('report_fluid.html', data=formatted_data)
