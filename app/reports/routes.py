@@ -18,6 +18,10 @@ def report_selection():
                 flash('Please enter all required fields.')
                 return redirect(url_for('reports.report_selection'))
             
+            if service_name == 'fluid intake':
+                total_fluid_volume = fetch_and_summarize_fluid_volume(resident_initials, start_date, end_date)
+                flash(f'Total Fluid Volume: {total_fluid_volume} ml')
+            
             # Redirect to report_selection_logic blueprint with selected service and date range
             return redirect(url_for('reports.report_selection_logic', unit_name=unit_name, resident_initials=resident_initials, service_name=service_name, start_date=start_date, end_date=end_date))
         
@@ -30,7 +34,10 @@ def report_selection():
         units = cursor.fetchall()
         conn.close()
         
-        return render_template('report_selection.html', services=services, units=units)
+        # Get current date
+        current_date = datetime.now().strftime('%Y-%m-%d')
+        
+        return render_template('report_selection.html', services=services, units=units, current_date=current_date)
     return redirect(url_for('login.login'))
 
 @bp.route('/report_selection_logic', methods=['GET', 'POST'])
@@ -79,3 +86,16 @@ def report_fluid():
         formatted_data.append(row)
 
     return render_template('report_fluid.html', data=formatted_data)
+
+def fetch_and_summarize_fluid_volume(resident_initials, start_date, end_date):
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT fluid_volume FROM fluid_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    data = cursor.fetchall()
+    conn.close()
+    
+    total_fluid_volume = sum(row[0] for row in data)
+    return total_fluid_volume
