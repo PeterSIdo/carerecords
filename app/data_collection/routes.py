@@ -60,6 +60,8 @@ def fluid_intake():
     conn.close()
     return render_template('fluid_intake_form.html', fluid_list=fluid_list, unit_name=unit_name, resident_initials=resident_initials)
 
+# c:/Users/Peter/Documents/Care-Home-4/app/data_collection/routes.py
+
 @bp.route('/submit_fluid_intake', methods=['POST'])
 def submit_fluid_intake():
     resident_initials = request.form.get('resident_initials')
@@ -67,10 +69,19 @@ def submit_fluid_intake():
     fluid_volume = request.form.get('fluid_volume')
     fluid_note = request.form.get('fluid_note')
     input_time = request.form.get('input_time')  # Retrieve input_time from the form data
+    staff_initials = request.form.get('staff_initials')  # Retrieve staff_initials from the form data
     timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
 
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
+
+    # Validation snippet to check if staff_initials exist in the staff table
+    cursor.execute('SELECT 1 FROM staff WHERE staff_initials = ?', (staff_initials,))
+    if cursor.fetchone() is None:
+        conn.close()
+        flash('Invalid staff initials. Please check and try again.', 'amber')
+        return redirect(url_for('data_collection.fluid_intake', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS fluid_chart (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,13 +89,14 @@ def submit_fluid_intake():
             timestamp TEXT,
             fluid_type TEXT,
             fluid_volume INTEGER,
-            fluid_note TEXT
+            fluid_note TEXT,
+            staff_initials TEXT
         )
     ''')
     cursor.execute('''
-        INSERT INTO fluid_chart (resident_initials, timestamp, fluid_type, fluid_volume, fluid_note)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (resident_initials, timestamp, fluid_type, fluid_volume, fluid_note))
+        INSERT INTO fluid_chart (resident_initials, timestamp, fluid_type, fluid_volume, fluid_note, staff_initials)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (resident_initials, timestamp, fluid_type, fluid_volume, fluid_note, staff_initials))
     conn.commit()
     conn.close()
 

@@ -37,7 +37,7 @@ def carer_input():
         if request.method == 'POST':
             unit_name = request.form.get('unit_name')
             resident_initials = request.form.get('resident_initials')
-            first_name = request.form.get('first_name')
+            
             service_name = request.form.get('service_name')
             
             if not unit_name or not resident_initials or not service_name:
@@ -45,7 +45,7 @@ def carer_input():
                 return redirect(url_for('main.carer_input'))
             
             # Redirect to data_collection blueprint with selected service
-            return redirect(url_for('data_collection.collect_data', unit_name=unit_name, resident_initials=resident_initials, first_name=first_name, service_name=service_name))
+            return redirect(url_for('data_collection.collect_data', unit_name=unit_name, resident_initials=resident_initials, service_name=service_name))
         
         # Fetch service list and unit list from the database
         conn = sqlite3.connect('care4.db')

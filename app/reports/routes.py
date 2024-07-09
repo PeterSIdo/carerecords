@@ -71,7 +71,8 @@ def report_fluid():
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT * FROM fluid_chart 
+        SELECT resident_initials, timestamp, fluid_type, fluid_volume, fluid_note, staff_initials 
+        FROM fluid_chart 
         WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
         ORDER BY timestamp ASC
     ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
@@ -82,7 +83,7 @@ def report_fluid():
     formatted_data = []
     for row in data:
         row = list(row)
-        row[2] = datetime.strptime(row[2], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')  # Format without seconds
+        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')  # Format without seconds
         formatted_data.append(row)
 
     return render_template('report_fluid.html', data=formatted_data)
