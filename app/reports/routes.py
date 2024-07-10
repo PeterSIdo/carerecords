@@ -59,6 +59,8 @@ def report_selection_logic():
         return redirect(url_for('reports.report_fluid', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     elif service_name == 'food intake':
         return redirect(url_for('reports.report_food', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
+    elif service_name == 'cardex':
+        return redirect(url_for('reports.report_cardex', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     else:
         return redirect(url_for('login.login'))
 
@@ -126,3 +128,29 @@ def report_food():
         formatted_data.append(row)
 
     return render_template('report_food.html', data=formatted_data)
+
+@bp.route('/report_cardex')
+def report_cardex():
+    resident_initials = request.args.get('resident_initials')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT resident_initials, timestamp, cardex_text, staff_initials 
+        FROM cardex 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    data = cursor.fetchall()
+    conn.close()
+
+    # Convert timestamp strings to datetime objects
+    formatted_data = []
+    for row in data:
+        row = list(row)
+        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')  # Format without seconds
+        formatted_data.append(row)
+
+    return render_template('report_cardex.html', data=formatted_data)

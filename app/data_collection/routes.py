@@ -46,6 +46,8 @@ def data_collection_logic():
         return redirect(url_for('data_collection.fluid_intake', unit_name=unit_name, resident_initials=resident_initials))
     elif service_name == 'food intake':
         return redirect(url_for('data_collection.food_intake', unit_name=unit_name, resident_initials=resident_initials))
+    elif service_name == 'cardex':
+        return redirect(url_for('data_collection.cardex', unit_name=unit_name, resident_initials=resident_initials))
     else:
         return redirect(url_for('data_collection.collect_data'))
 
@@ -129,6 +131,7 @@ def submit_food_intake():
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
 
+    # Validation snippet to check if staff_initials exist in the staff table
     cursor.execute('SELECT 1 FROM staff WHERE staff_initials = ?', (staff_initials,))
     if cursor.fetchone() is None:
         conn.close()
@@ -155,3 +158,51 @@ def submit_food_intake():
 
     flash('Food intake recorded successfully!', 'success')
     return redirect(url_for('data_collection.food_intake', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
+
+@bp.route('/cardex')
+def cardex():
+    unit_name = request.args.get('unit_name')
+    resident_initials = request.args.get('resident_initials')
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, cardex_text FROM cardex')
+    cardex_text = cursor.fetchall()
+    conn.close()
+    return render_template('cardex_form.html', cardex_text=cardex_text, unit_name=unit_name, resident_initials=resident_initials)
+
+@bp.route('/submit_cardex', methods=['POST'])
+def submit_cardex():
+    resident_initials = request.form.get('resident_initials')
+    cardex_text = request.form.get('cardex_text')
+    input_time = request.form.get('input_time')  # Retrieve input_time from the form data
+    staff_initials = request.form.get('staff_initials')  # Retrieve staff_initials from the form data
+    timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
+
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+
+    # Validation snippet to check if staff_initials exist in the staff table
+    cursor.execute('SELECT 1 FROM staff WHERE staff_initials = ?', (staff_initials,))
+    if cursor.fetchone() is None:
+        conn.close()
+        flash('Invalid staff initials. Please check and try again.', 'amber')
+        return redirect(url_for('data_collection.cardex', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS cardex (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            resident_initials TEXT,
+            timestamp TEXT,
+            cardex_text TEXT,
+            staff_initials TEXT
+        )
+    ''')
+    cursor.execute('''
+        INSERT INTO cardex (resident_initials, timestamp, cardex_text, staff_initials)
+        VALUES (?, ?, ?, ?)
+    ''', (resident_initials, timestamp, cardex_text, staff_initials))
+    conn.commit()
+    conn.close()
+
+    flash('Cardex entry recorded successfully!', 'success')
+    return redirect(url_for('data_collection.cardex', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))

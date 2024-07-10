@@ -1,0 +1,34 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/cardex_form.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Cardex Form</h2>
+    <form method="POST" action="{{ url_for('data_collection.submit_cardex') }}" class="form-container">
+        <input type="hidden" name="unit_name" value="{{ request.args.get('unit_name') }}">
+        <input type="hidden" name="resident_initials" value="{{ request.args.get('resident_initials') }}">
+        <div class="form-group">
+            <label for="cardex_text">Cardex Text:</label>
+            <textarea id="cardex_text" name="cardex_text" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="input_time">Time of Input:</label>
+            <input type="time" id="input_time" name="input_time" required>
+        </div>
+        <div class="form-group">
+            <label for="staff_initials">Staff Initials:</label>
+            <input type="text" id="staff_initials" name="staff_initials" required>
+        </div>
+        
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        // Set the default value of the time input field to the current time
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('input_time').value = `${hours}:${minutes}`;
+        });
+    </script>
+{% endblock %}
