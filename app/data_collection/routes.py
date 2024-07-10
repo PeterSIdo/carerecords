@@ -102,3 +102,56 @@ def submit_fluid_intake():
 
     flash('The database was updated successfully!', 'success')
     return redirect(url_for('main.carer_input'))
+
+@bp.route('/food_intake')
+def food_intake():
+    unit_name = request.args.get('unit_name')
+    resident_initials = request.args.get('resident_initials')
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, food_name FROM food_list')
+    food_list = cursor.fetchall()
+    conn.close()
+    return render_template('food_intake_form.html', food_list=food_list, unit_name=unit_name, resident_initials=resident_initials)
+
+# c:/Users/Peter/Documents/Care-Home-4/app/data_collection/routes.py
+
+@bp.route('/submit_food_intake', methods=['POST'])
+def submit_food_intake():
+    resident_initials = request.form.get('resident_initials')
+    food_type = request.form.get('food_type')
+    food_volume = request.form.get('food_volume')
+    food_note = request.form.get('food_note')
+    input_time = request.form.get('input_time')
+    staff_initials = request.form.get('staff_initials')
+    timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
+
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT 1 FROM staff WHERE staff_initials = ?', (staff_initials,))
+    if cursor.fetchone() is None:
+        conn.close()
+        flash('Invalid staff initials. Please check and try again.', 'amber')
+        return redirect(url_for('data_collection.food_intake', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS food_chart (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            resident_initials TEXT,
+            timestamp TEXT,
+            food_type TEXT,
+            food_volume INTEGER,
+            food_note TEXT,
+            staff_initials TEXT
+        )
+    ''')
+    cursor.execute('''
+        INSERT INTO food_chart (resident_initials, timestamp, food_type, food_amount, food_note, staff_initials)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (resident_initials, timestamp, food_type, food_volume, food_note, staff_initials))
+    conn.commit()
+    conn.close()
+
+    flash('Food intake recorded successfully!', 'success')
+    return redirect(url_for('data_collection.food_intake', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
