@@ -59,6 +59,8 @@ def report_selection_logic():
         return redirect(url_for('reports.report_fluid', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     elif service_name == 'food intake':
         return redirect(url_for('reports.report_food', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
+    elif service_name == 'personal care':
+        return redirect(url_for('reports.report_personal_care', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     elif service_name == 'cardex':
         return redirect(url_for('reports.report_cardex', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     else:
@@ -128,6 +130,23 @@ def report_food():
         formatted_data.append(row)
 
     return render_template('report_food.html', data=formatted_data)
+
+@bp.route('/report_personal_care')
+def report_personal_care():
+    unit_name = request.args.get('unit_name')
+    resident_initials = request.args.get('resident_initials')
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT timestamp, personal_care_type, personal_care_note, personal_care_duration, staff_initials
+        FROM personal_care_chart
+        WHERE resident_initials = ?
+        ORDER BY timestamp DESC
+    ''', (resident_initials,))
+    personal_care_records = cursor.fetchall()
+    conn.close()
+    return render_template('report_personal_care.html', personal_care_records=personal_care_records, unit_name=unit_name, resident_initials=resident_initials)
+
 
 @bp.route('/report_cardex')
 def report_cardex():

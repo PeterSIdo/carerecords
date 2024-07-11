@@ -46,6 +46,8 @@ def data_collection_logic():
         return redirect(url_for('data_collection.fluid_intake', unit_name=unit_name, resident_initials=resident_initials))
     elif service_name == 'food intake':
         return redirect(url_for('data_collection.food_intake', unit_name=unit_name, resident_initials=resident_initials))
+    elif service_name == 'personal care':
+        return redirect(url_for('data_collection.personal_care_input', unit_name=unit_name, resident_initials=resident_initials))
     elif service_name == 'cardex':
         return redirect(url_for('data_collection.cardex', unit_name=unit_name, resident_initials=resident_initials))
     else:
@@ -158,6 +160,62 @@ def submit_food_intake():
 
     flash('Food intake recorded successfully!', 'success')
     return redirect(url_for('data_collection.food_intake', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
+
+# c:/Users/Peter/Documents/Care-Home-4/app/data_collection/routes.py
+    # Personal care input
+@bp.route('/personal_care_input')
+def personal_care_input():
+    unit_name = request.args.get('unit_name')
+    resident_initials = request.args.get('resident_initials')
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, personal_care_name FROM personal_care_list')
+    personal_care_list = cursor.fetchall()
+    conn.close()
+    return render_template('personal_care_form.html', personal_care_list= personal_care_list, unit_name=unit_name, resident_initials=resident_initials)
+
+@bp.route('/submit_personal_care', methods=['POST'])
+def submit_personal_care():
+    unit_name = request.form.get('unit_name')
+    resident_initials = request.form.get('resident_initials')
+    personal_care_type = request.form.get('personal_care_type')
+    personal_care_note = request.form.get('personal_care_note')
+    personal_care_duration = request.form.get('personal_care_duration')
+    input_time = request.form.get('input_time')
+    staff_initials = request.form.get('staff_initials')
+    timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
+
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+
+    # Validation snippet to check if staff_initials exist in the staff table
+    cursor.execute('SELECT 1 FROM staff WHERE staff_initials = ?', (staff_initials,))
+    if cursor.fetchone() is None:
+        conn.close()
+        flash('Invalid staff initials. Please check and try again.', 'amber')
+        return redirect(url_for('data_collection.personal_care_input', unit_name=unit_name, resident_initials=resident_initials))
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS personal_care_chart (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            resident_initials TEXT,
+            timestamp TEXT,
+            personal_care_type TEXT,
+            personal_care_duration INTEGER,
+            personal_care_note TEXT,
+            staff_initials TEXT
+        )
+    ''')
+    cursor.execute('''
+        INSERT INTO personal_care_chart (resident_initials, timestamp, personal_care_type, personal_care_note, personal_care_duration, staff_initials)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (resident_initials, timestamp, personal_care_type, personal_care_note, personal_care_duration,staff_initials))
+    conn.commit()
+    conn.close()
+
+    flash('Personal care entry recorded successfully!', 'success')
+    return redirect(url_for('data_collection.personal_care_input', unit_name=unit_name, resident_initials=resident_initials))
+
 
 @bp.route('/cardex')
 def cardex():
