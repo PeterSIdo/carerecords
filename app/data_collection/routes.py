@@ -10,9 +10,9 @@ from app.login_check import login_required
 def collect_data():
     unit_name = request.args.get('unit_name')
     resident_initials = request.args.get('resident_initials')
-    first_name = request.args.get('first_name')
+    resident_name = request.args.get('resident_name')
     service_name = request.args.get('service_name')
-    return render_template('collect_data.html', unit_name=unit_name, resident_initials=resident_initials, first_name=first_name, service_name=service_name)
+    return render_template('collect_data.html', unit_name=unit_name, resident_initials=resident_initials, resident_name=resident_name, service_name=service_name)
 
 @bp.route('/select_unit')
 def select_unit():
@@ -29,7 +29,7 @@ def select_resident():
     unit_name = request.form.get('unit_name')
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT resident_initials, first_name FROM residents WHERE unit_name = ?', (unit_name,))
+    cursor.execute('SELECT resident_initials, resident_name FROM residents WHERE unit_name = ?', (unit_name,))
     residents = cursor.fetchall()
     conn.close()
     return render_template('select_resident.html', residents=residents, unit_name=unit_name)
@@ -41,7 +41,7 @@ def data_collection_logic():
     unit_name = request.form.get('unit_name')
     resident_initials = request.form.get('resident_initials')
     service_name = request.form.get('service_name')
-    first_name= request.form.get('first_name')
+    resident_name= request.form.get('resident_name')
     if service_name == 'fluid intake':
         return redirect(url_for('data_collection.fluid_intake', unit_name=unit_name, resident_initials=resident_initials))
     elif service_name == 'food intake':

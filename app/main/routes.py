@@ -75,8 +75,8 @@ def get_residents():
 def enter_resident():
     if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'a':
         if request.method == 'POST':
-            first_name = request.form.get('first_name')
-            surname = request.form.get('surname')
+            resident_name = request.form.get('resident_name')
+            resident_surname = request.form.get('resident_surname')
             unit_name = request.form.get('unit_name')
             room_nr = request.form.get('room_nr')
 
@@ -88,7 +88,7 @@ def enter_resident():
                 return redirect(url_for('main.enter_resident'))
             
             # Calculate resident initials
-            initials = first_name[0].upper() + surname[0].upper()
+            initials = resident_name[0].upper() + resident_surname[0].upper()
             resident_initials = f"{unit_name}{room_nr:02d}{initials}"
 
             # Connect to the database
@@ -98,15 +98,15 @@ def enter_resident():
             # Create table if it does not exist
             cursor.execute('''CREATE TABLE IF NOT EXISTS residents (
                                 id INTEGER PRIMARY KEY, 
-                                first_name TEXT, 
-                                surname TEXT, 
+                                resident_name TEXT, 
+                                resident_surname TEXT, 
                                 unit_name TEXT, 
                                 room_nr INTEGER,
                                 resident_initials TEXT)''')
 
             # Insert data into the table
-            cursor.execute('INSERT INTO residents (first_name, surname, unit_name, room_nr, resident_initials) VALUES (?, ?, ?, ?, ?)', 
-                           (first_name, surname, unit_name, room_nr, resident_initials))
+            cursor.execute('INSERT INTO residents (resident_name, resident_surname, unit_name, room_nr, resident_initials) VALUES (?, ?, ?, ?, ?)', 
+                           (resident_name, resident_surname, unit_name, room_nr, resident_initials))
 
             # Commit changes and close connection
             conn.commit()
@@ -172,8 +172,8 @@ def enter_bowel_list():
 def manage_database():
     if request.method == 'POST':
         # Get form data
-        first_name = request.form.get('first_name')
-        surname = request.form.get('surname')
+        resident_name = request.form.get('resident_name')
+        resident_surname = request.form.get('resident_surname')
         unit_name = request.form.get('unit_name')
         room_nr = request.form.get('room_nr')
 
@@ -184,15 +184,15 @@ def manage_database():
         # Create table if it does not exist
         cursor.execute('''CREATE TABLE IF NOT EXISTS residents (
                             id INTEGER PRIMARY KEY, 
-                            first_name TEXT, 
-                            surname TEXT, 
+                            resident_name TEXT, 
+                            resident_surname TEXT, 
                             unit_name TEXT, 
                             room_nr INTEGER)''')
 
         # Insert data into the table
-        if first_name and surname:
-            cursor.execute('INSERT INTO residents (first_name, surname, unit_name, room_nr) VALUES (?, ?, ?, ?)', 
-                           (first_name, surname, unit_name, room_nr))
+        if resident_name and resident_surname:
+            cursor.execute('INSERT INTO residents (resident_name, resident_surname, unit_name, room_nr) VALUES (?, ?, ?, ?)', 
+                           (resident_name, resident_surname, unit_name, room_nr))
 
         # Commit changes and close connection
         conn.commit()
