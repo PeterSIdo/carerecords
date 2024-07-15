@@ -4,6 +4,14 @@ from app.login.forms import LoginForm  # Import the LoginForm
 import sqlite3
 from app.login_check import login_required
 
+@bp.route('/about_care_home')
+def about_care_home():
+    return render_template('about_care_home.html')
+
+@bp.route('/contact_us')
+def contact_us():
+    return render_template('contact_us.html')
+
 @bp.route('/')
 def index():
     if 'logged_in' in session and session['logged_in']:
