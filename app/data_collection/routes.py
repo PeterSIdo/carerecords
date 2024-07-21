@@ -73,7 +73,7 @@ def submit_fluid_intake():
     fluid_volume = request.form.get('fluid_volume')
     fluid_note = request.form.get('fluid_note')
     input_time = request.form.get('input_time')  # Retrieve input_time from the form data
-    staff_initials = request.form.get('staff_initials')  # Retrieve staff_initials from the form data
+    staff_initials = request.form.get('staff_initials').upper()  # Retrieve staff_initials from the form data
     timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
 
     conn = sqlite3.connect('care4.db')
@@ -126,8 +126,8 @@ def submit_food_intake():
     food_type = request.form.get('food_type')
     food_volume = request.form.get('food_volume')
     food_note = request.form.get('food_note')
-    input_time = request.form.get('input_time')
-    staff_initials = request.form.get('staff_initials')
+    input_time = request.form.get('input_time')  # Retrieve input_time from the form data
+    staff_initials = request.form.get('staff_initials').upper()  # Convert to uppercase
     timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
 
     conn = sqlite3.connect('care4.db')
@@ -182,7 +182,7 @@ def submit_personal_care():
     personal_care_note = request.form.get('personal_care_note')
     personal_care_duration = request.form.get('personal_care_duration')
     input_time = request.form.get('input_time')
-    staff_initials = request.form.get('staff_initials')
+    staff_initials = request.form.get('staff_initials').upper()
     timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
 
     conn = sqlite3.connect('care4.db')
@@ -233,7 +233,7 @@ def submit_cardex():
     resident_initials = request.form.get('resident_initials')
     cardex_text = request.form.get('cardex_text')
     input_time = request.form.get('input_time')  # Retrieve input_time from the form data
-    staff_initials = request.form.get('staff_initials')  # Retrieve staff_initials from the form data
+    staff_initials = request.form.get('staff_initials').upper()  # Retrieve staff_initials from the form data
     timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
 
     conn = sqlite3.connect('care4.db')
