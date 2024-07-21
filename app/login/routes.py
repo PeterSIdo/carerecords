@@ -17,7 +17,7 @@ def login():
             session['logged_in'] = True
             session['username'] = username
             if user_mode == 'a': 
-                return redirect(url_for('main.admin_panel'))
+                return redirect(url_for('admin.admin_dashboard'))
             if user_mode == 'c':
                 return redirect(url_for('main.carer_menu'))
             # carer_input

@@ -2,11 +2,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2 class="center-text"> Admin Panel 2</h2>
-    <p class="center-text">  Welcome to the admin panel.</p>
+    <h2 class="center-text"> Admin Dashboard</h2>
+
     <ul>
         <li><a href="{{ url_for('main.enter_resident') }}">Enter New Resident</a></li>
+
         <li><a href="{{ url_for('main.enter_service_list') }}">Update Service List</a></li>
+        
         <li><a href="{{ url_for('main.enter_fluid_list') }}">Update Fluid List</a></li>
         <li><a href="{{ url_for('main.enter_food_list') }}">Update Food List</a></li>
         <li><a href="{{ url_for('main.enter_care_list') }}">Update Care List</a></li>
