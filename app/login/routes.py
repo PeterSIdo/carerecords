@@ -20,7 +20,8 @@ def login():
                 return redirect(url_for('admin.admin_dashboard'))
             if user_mode == 'c':
                 return redirect(url_for('main.carer_menu'))
-            # carer_input
+            # Add flash message if user_mode is not 'a' or 'c'
+            flash('Access restricted to Admin and Carer only.')
         else:
             flash('Invalid username or password')
     return render_template('login.html', form=form)

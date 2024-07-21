@@ -79,52 +79,7 @@ def get_residents():
 
 
 
-@bp.route('/enter_resident', methods=['GET', 'POST'])
-def enter_resident():
-    if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'a':
-        if request.method == 'POST':
-            resident_name = request.form.get('resident_name')
-            resident_surname = request.form.get('resident_surname')
-            unit_name = request.form.get('unit_name')
-            room_nr = request.form.get('room_nr')
 
-            # Convert room_nr to an integer
-            try:
-                room_nr = int(room_nr)
-            except ValueError:
-                flash('Room number must be an integer.')
-                return redirect(url_for('main.enter_resident'))
-            
-            # Calculate resident initials
-            initials = resident_name[0].upper() + resident_surname[0].upper()
-            resident_initials = f"{unit_name}{room_nr:02d}{initials}"
-
-            # Connect to the database
-            conn = sqlite3.connect('care4.db')
-            cursor = conn.cursor()
-
-            # Create table if it does not exist
-            cursor.execute('''CREATE TABLE IF NOT EXISTS residents (
-                                id INTEGER PRIMARY KEY, 
-                                resident_name TEXT, 
-                                resident_surname TEXT, 
-                                unit_name TEXT, 
-                                room_nr INTEGER,
-                                resident_initials TEXT)''')
-
-            # Insert data into the table
-            cursor.execute('INSERT INTO residents (resident_name, resident_surname, unit_name, room_nr, resident_initials) VALUES (?, ?, ?, ?, ?)', 
-                           (resident_name, resident_surname, unit_name, room_nr, resident_initials))
-
-            # Commit changes and close connection
-            conn.commit()
-            conn.close()
-
-            flash('Resident added successfully!')
-            return redirect(url_for('main.enter_resident'))
-
-        return render_template('enter_resident.html')
-    return redirect(url_for('login.login'))
 
 
 
