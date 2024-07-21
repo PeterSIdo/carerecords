@@ -1,11 +1,41 @@
 {% extends "base.html" %}
+
 {% block content %}
 
-    <div class="link-container">
-        <a href="{{ url_for('main.index') }}">Back to Care-Home</a>
-        <hr>
-    </div>
-
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care-Home-4 Project Overview</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            font-size: 14px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        h2, h3 {
+            color: #555;
+        }
+        p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
     <div class="container">
         <h3>Care-Home-4 Project Overview</h3>
         
@@ -67,11 +97,8 @@
         <h3>Conclusion</h3>
         <p>Care-Home-4 is poised to make a significant difference in care home management with its comprehensive features and modular design.<br>We are excited to present this project to you and look forward to your feedback and support as we continue to develop and enhance its capabilities.</p>
     </div>
+</body>
+</html>
 
-    <div class="link-container">
-        <hr>
-        <a href="{{ url_for('main.index') }}">Back to Care-Home</a>
-        
-    </div>
 
 {% endblock %}

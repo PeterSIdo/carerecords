@@ -83,7 +83,8 @@
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
-            background-color: #f9f9f9;
+            background-color: #f9ffc1;
+            <!-- background-color: #f9f9f9;-->
             border-radius: 5px;
         }
         .test-version-info p {
@@ -207,6 +208,29 @@
             content: "\2630"; /* Unicode for three horizontal lines */
             font-size: 20px;
         }
+
+        /* Add this to your CSS file or within a <style> tag in base.html */
+        .link-container {
+            margin-top: 0px;
+            text-align: center;
+        }
+
+        /* Link container styling */
+        .link-container a {
+            margin: 0 10px;
+            color: #006400; /* Dark green */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link-container a:hover {
+            color: #004d00; /* Darker green */
+        }
+
+        .footer {
+            text-align: center;
+        }
+
     </style>
 </head>
 <body>
@@ -228,12 +252,14 @@
 
                 <!-- Back to Menu Button -->
                 {% if session.user_mode == 'c' %}
-                    <a href="{{ url_for('main.carer_menu') }}" class="btn btn-secondary">Input Menu</a>
+                    <a href="{{ url_for('main.carer_menu') }}" class="btn btn-secondary">
+                        Carer Menu</a>
                 {% endif %}
                 <!--Logout button-->
                 <a href="{{ url_for('main.logout') }}" class="btn btn-amber">Logout</a>
 
                 <!-- Dropdown Menu -->
+                <!--
                 <div class="dropdown">
                     <button class="dropbtn"></button>
                     <div class="dropdown-content">
@@ -241,6 +267,8 @@
                         <a href="{{ url_for('main.contact_us') }}">Contact Us</a>
                     </div>
                 </div>
+                -->
+
             {% endif %}
         </div>
     </div>
