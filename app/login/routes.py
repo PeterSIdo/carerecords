@@ -23,5 +23,5 @@ def login():
             # Add flash message if user_mode is not 'a' or 'c'
             flash('Access restricted to Admin and Carer only.')
         else:
-            flash('Invalid username or password')
+            flash('Invalid username or password', 'success')
     return render_template('login.html', form=form)

@@ -8,6 +8,19 @@
     </div>
     <hr>
 
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+
+
+
     <h2 class="center-text"> Login</h2>
     <form method="POST" action="{{ url_for('login.login') }}" class="form-container">
         {{ form.hidden_tag() }}
