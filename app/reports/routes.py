@@ -63,8 +63,11 @@ def report_selection_logic():
         return redirect(url_for('reports.report_personal_care', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     elif service_name == 'cardex':
         return redirect(url_for('reports.report_cardex', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
+    elif service_name == 'all daily records':  # New Service Handling
+        return redirect(url_for('reports.report_all_daily_records', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     else:
         return redirect(url_for('login.login'))
+
 
 @bp.route('/report_fluid')
 def report_fluid():
@@ -173,3 +176,59 @@ def report_cardex():
         formatted_data.append(row)
 
     return render_template('report_cardex.html', data=formatted_data)
+
+@bp.route('/report_all_daily_records')
+def report_all_daily_records():
+    resident_initials = request.args.get('resident_initials')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+
+    # Fetch records from fluid_chart
+    cursor.execute('''
+        SELECT timestamp, fluid_type, fluid_volume, fluid_note, staff_initials 
+        FROM fluid_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    fluid_records = cursor.fetchall()
+
+    # Fetch records from food_chart
+    cursor.execute('''
+        SELECT timestamp, food_type, food_amount, food_note, staff_initials 
+        FROM food_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    food_records = cursor.fetchall()
+
+    # Fetch records from personal_care_chart
+    cursor.execute('''
+        SELECT timestamp, personal_care_type, personal_care_duration, personal_care_note, staff_initials 
+        FROM personal_care_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    personal_care_records = cursor.fetchall()
+
+    # Fetch records from cardex_chart
+    cursor.execute('''
+        SELECT timestamp, cardex_text, staff_initials 
+        FROM cardex_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    cardex_records = cursor.fetchall()
+
+    conn.close()
+
+    return render_template('report_all_daily_records.html', 
+                            resident_initials=resident_initials, 
+                            start_date=start_date,
+                            end_date=end_date,
+                            fluid_records=fluid_records, 
+                            food_records=food_records, 
+                            personal_care_records=personal_care_records, 
+                            cardex_records=cardex_records)

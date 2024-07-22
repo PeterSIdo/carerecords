@@ -1,0 +1,98 @@
+<!-- c:/Users/Peter/Documents/Care-Home-4/app/templates/report_all_daily_records.html -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Daily Records for {{ resident_initials }} from {{ start_date }} to {{ end_date }}</h2>
+
+    <h3>Fluid Intake</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Fluid Type</th>
+                <th>Volume (ml)</th>
+                <th>Note</th>
+                <th>Staff Initials</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in fluid_records %}
+                <tr>
+                    <td>{{ record[0] }}</td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                    <td>{{ record[3] }}</td>
+                    <td>{{ record[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Food Intake</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Food Type</th>
+                <th>Volume</th>
+                <th>Note</th>
+                <th>Staff Initials</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in food_records %}
+                <tr>
+                    <td>{{ record[0] }}</td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                    <td>{{ record[3] }}</td>
+                    <td>{{ record[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Personal Care</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Care Type</th>
+                <th>Duration (minutes)</th>
+                <th>Note</th>
+                <th>Staff Initials</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in personal_care_records %}
+                <tr>
+                    <td>{{ record[0] }}</td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                    <td>{{ record[3] }}</td>
+                    <td>{{ record[4] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Cardex</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Cardex Text</th>
+                <th>Staff Initials</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in cardex_records %}
+                <tr>
+                    <td>{{ record[0] }}</td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
