@@ -223,7 +223,7 @@ def cardex():
     resident_initials = request.args.get('resident_initials')
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT id, cardex_text FROM cardex')
+    cursor.execute('SELECT id, cardex_text FROM cardex_chart')
     cardex_text = cursor.fetchall()
     conn.close()
     return render_template('cardex_form.html', cardex_text=cardex_text, unit_name=unit_name, resident_initials=resident_initials)
@@ -247,7 +247,7 @@ def submit_cardex():
         return redirect(url_for('data_collection.cardex', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS cardex (
+        CREATE TABLE IF NOT EXISTS cardex_chart (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             resident_initials TEXT,
             timestamp TEXT,
@@ -256,7 +256,7 @@ def submit_cardex():
         )
     ''')
     cursor.execute('''
-        INSERT INTO cardex (resident_initials, timestamp, cardex_text, staff_initials)
+        INSERT INTO cardex_chart (resident_initials, timestamp, cardex_text, staff_initials)
         VALUES (?, ?, ?, ?)
     ''', (resident_initials, timestamp, cardex_text, staff_initials))
     conn.commit()
