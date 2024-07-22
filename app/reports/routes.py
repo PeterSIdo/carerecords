@@ -90,10 +90,13 @@ def report_fluid():
     formatted_data = []
     for row in data:
         row = list(row)
-        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')  # Format without seconds
+        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')  # Format without seconds
         formatted_data.append(row)
-
-    return render_template('report_fluid.html', data=formatted_data)
+    return render_template('report_fluid.html', 
+                        resident_initials=resident_initials,
+                        start_date=start_date,
+                        end_date=end_date, 
+                        data=formatted_data)
 
 def fetch_and_summarize_fluid_volume(resident_initials, start_date, end_date):
     conn = sqlite3.connect('care4.db')
@@ -186,7 +189,7 @@ def report_all_daily_records():
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
 
-    # Fetch records from fluid_chart
+# Fetch records from fluid_chart
     cursor.execute('''
         SELECT timestamp, fluid_type, fluid_volume, fluid_note, staff_initials 
         FROM fluid_chart 
@@ -223,6 +226,20 @@ def report_all_daily_records():
     cardex_records = cursor.fetchall()
 
     conn.close()
+
+    # Format timestamps
+    def format_records(records):
+        formatted_records = []
+        for record in records:
+            record = list(record)
+            record[0] = datetime.strptime(record[0], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')
+            formatted_records.append(record)
+        return formatted_records
+
+    fluid_records = format_records(fluid_records)
+    food_records = format_records(food_records)
+    personal_care_records = format_records(personal_care_records)
+    cardex_records = format_records(cardex_records)
 
     return render_template('report_all_daily_records.html', 
                             resident_initials=resident_initials, 
