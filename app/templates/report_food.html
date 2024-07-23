@@ -3,10 +3,12 @@
 
 {% block content %}
     <h3>Report Food Intake</h3>
+    <h4> for {{ resident_initials }} from {{ start_date }} to {{ end_date }}</h4>
+    <hr>
     <table>
         <thead>
             <tr>
-                <th>Resident</th>
+               
                 <th>Date/Time</th>
                 <th>Food</th>
                 <th>Amount</th>
@@ -17,7 +19,7 @@
         <tbody>
             {% for row in data %}
                 <tr>
-                    <td>{{ row[0] }}</td>
+                    
                     <td>{{ row[1] }}</td>
                     <td>{{ row[2] }}</td>
                     <td>{{ row[3] }}</td>

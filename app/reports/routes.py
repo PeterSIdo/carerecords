@@ -132,26 +132,38 @@ def report_food():
     formatted_data = []
     for row in data:
         row = list(row)
-        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')  # Format without seconds
+        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')  # Format without seconds
         formatted_data.append(row)
 
-    return render_template('report_food.html', data=formatted_data)
+    return render_template('report_food.html',
+                        resident_initials=resident_initials, 
+                        start_date=start_date,
+                        end_date=end_date,
+                        data=formatted_data)
 
 @bp.route('/report_personal_care')
 def report_personal_care():
     unit_name = request.args.get('unit_name')
     resident_initials = request.args.get('resident_initials')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
     cursor.execute('''
         SELECT timestamp, personal_care_type, personal_care_note, personal_care_duration, staff_initials
         FROM personal_care_chart
-        WHERE resident_initials = ?
-        ORDER BY timestamp DESC
-    ''', (resident_initials,))
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
     personal_care_records = cursor.fetchall()
+    
     conn.close()
-    return render_template('report_personal_care.html', personal_care_records=personal_care_records, unit_name=unit_name, resident_initials=resident_initials)
+    return render_template('report_personal_care.html',
+                        personal_care_records=personal_care_records, 
+                        unit_name=unit_name,
+                        start_date=start_date,
+                        end_date=end_date, 
+                        resident_initials=resident_initials)
 
 
 @bp.route('/report_cardex')
@@ -164,7 +176,7 @@ def report_cardex():
     cursor = conn.cursor()
     cursor.execute('''
         SELECT resident_initials, timestamp, cardex_text, staff_initials 
-        FROM cardex 
+        FROM cardex_chart 
         WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
         ORDER BY timestamp ASC
     ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
@@ -175,10 +187,14 @@ def report_cardex():
     formatted_data = []
     for row in data:
         row = list(row)
-        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%Y-%m-%d %H:%M')  # Format without seconds
+        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')  # Format without seconds
         formatted_data.append(row)
 
-    return render_template('report_cardex.html', data=formatted_data)
+    return render_template('report_cardex.html', 
+                        start_date=start_date,
+                        end_date=end_date, 
+                        resident_initials=resident_initials,
+                        data=formatted_data)
 
 @bp.route('/report_all_daily_records')
 def report_all_daily_records():
