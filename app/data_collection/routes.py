@@ -50,6 +50,8 @@ def data_collection_logic():
         return redirect(url_for('data_collection.personal_care_input', unit_name=unit_name, resident_initials=resident_initials))
     elif service_name == 'cardex':
         return redirect(url_for('data_collection.cardex', unit_name=unit_name, resident_initials=resident_initials))
+    elif service_name == 'care frequency':
+        return redirect(url_for('data_collection.care_frequency', unit_name=unit_name, resident_initials=resident_initials))    
     else:
         return redirect(url_for('data_collection.collect_data'))
 
@@ -264,3 +266,53 @@ def submit_cardex():
 
     flash('Cardex entry recorded successfully!', 'success')
     return redirect(url_for('data_collection.cardex', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
+
+# c:/Users/Peter/Documents/Care-Home-4/app/data_collection/routes.py
+# Care frequency route
+@bp.route('/care_frequency')
+@login_required()
+def care_frequency():
+    resident_initials = request.args.get('resident_initials')
+    return render_template('care_frequency_form.html', resident_initials=resident_initials)
+
+@bp.route('/submit_care_frequency', methods=['POST'])
+@login_required()
+def submit_care_frequency():
+    # Collect form data
+    resident_initials = request.form.get('resident_initials')
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    mattress_appropriate = request.form.get('mattress_appropriate')
+    cushion_appropriate = request.form.get('cushion_appropriate')
+    functionality_check = request.form.get('functionality_check')
+    pressure_areas_checked = request.form.get('pressure_areas_checked')
+    redness_present = request.form.get('redness_present')
+    keep_moving = request.form.get('keep_moving')
+    incontinence_urine = request.form.get('incontinence_urine')
+    incontinence_bowels = request.form.get('incontinence_bowels')
+    diet_intake = request.form.get('diet_intake')
+    fluid_intake = request.form.get('fluid_intake')
+    supplement_intake = request.form.get('supplement_intake')
+    staff_initials = request.form.get('staff_initials').upper()
+    notes = request.form.get('notes')
+
+    # Insert data into the database
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO care_frequency_chart (
+            resident_initials, timestamp, mattress_appropriate, cushion_appropriate,
+            functionality_check, pressure_areas_checked, redness_present, keep_moving,
+            incontinence_urine, incontinence_bowels, diet_intake, fluid_intake,
+            supplement_intake, staff_initials, notes
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (
+        resident_initials, timestamp, mattress_appropriate, cushion_appropriate,
+        functionality_check, pressure_areas_checked, redness_present, keep_moving,
+        incontinence_urine, incontinence_bowels, diet_intake, fluid_intake,
+        supplement_intake, staff_initials, notes
+    ))
+    conn.commit()
+    conn.close()
+
+    flash('Care frequency data submitted successfully!', 'success')
+    return redirect(url_for('main.carer_menu'))
