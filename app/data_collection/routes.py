@@ -286,7 +286,7 @@ def submit_care_frequency():
     functionality_check = request.form.get('functionality_check')
     pressure_areas_checked = request.form.get('pressure_areas_checked')
     redness_present = request.form.get('redness_present')
-    keep_moving = request.form.get('keep_moving')
+    position = request.form.get('position')
     incontinence_urine = request.form.get('incontinence_urine')
     incontinence_bowels = request.form.get('incontinence_bowels')
     diet_intake = request.form.get('diet_intake')
@@ -301,13 +301,13 @@ def submit_care_frequency():
     cursor.execute('''
         INSERT INTO care_frequency_chart (
             resident_initials, timestamp, mattress_appropriate, cushion_appropriate,
-            functionality_check, pressure_areas_checked, redness_present, keep_moving,
+            functionality_check, pressure_areas_checked, redness_present, position,
             incontinence_urine, incontinence_bowels, diet_intake, fluid_intake,
             supplement_intake, staff_initials, notes
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (
         resident_initials, timestamp, mattress_appropriate, cushion_appropriate,
-        functionality_check, pressure_areas_checked, redness_present, keep_moving,
+        functionality_check, pressure_areas_checked, redness_present, position,
         incontinence_urine, incontinence_bowels, diet_intake, fluid_intake,
         supplement_intake, staff_initials, notes
     ))

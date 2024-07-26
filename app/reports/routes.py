@@ -28,7 +28,7 @@ def report_selection():
         # Fetch service list and unit list from the database
         conn = sqlite3.connect('care4.db')
         cursor = conn.cursor()
-        cursor.execute('SELECT id, service_name FROM service_list')
+        cursor.execute('SELECT id, report_name FROM report_list')
         services = cursor.fetchall()
         cursor.execute('SELECT DISTINCT unit_name FROM units')  # Updated query
         units = cursor.fetchall()
@@ -55,15 +55,17 @@ def report_selection_logic():
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
 
-    if service_name == 'fluid intake':
+    if service_name == 'fluid chart':
         return redirect(url_for('reports.report_fluid', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
-    elif service_name == 'food intake':
+    elif service_name == 'food chart':
         return redirect(url_for('reports.report_food', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
-    elif service_name == 'personal care':
+    elif service_name == 'personal care chart':
         return redirect(url_for('reports.report_personal_care', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
-    elif service_name == 'cardex':
+    elif service_name == 'cardex chart':
         return redirect(url_for('reports.report_cardex', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
-    elif service_name == 'all daily records':  # New Service Handling
+    elif service_name == 'care frequency chart':
+        return redirect(url_for('reports.report_care_frequency', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
+    elif service_name == 'all daily records': 
         return redirect(url_for('reports.report_all_daily_records', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     else:
         return redirect(url_for('login.login'))
@@ -241,6 +243,21 @@ def report_all_daily_records():
     ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
     cardex_records = cursor.fetchall()
 
+    # Initialize care_frequency_records to an empty list
+    care_frequency_records = []
+    
+    # Fetch records from care_frequency_chart
+    cursor.execute('''
+        SELECT timestamp, mattress_appropriate, cushion_appropriate, functionality_check, 
+               pressure_areas_checked, redness_present, position, incontinence_urine, 
+               incontinence_bowels, diet_intake, fluid_intake, supplement_intake, 
+               staff_initials, notes
+        FROM care_frequency_chart
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    care_frequency_records = cursor.fetchall()
+
     conn.close()
 
     # Format timestamps
@@ -256,6 +273,7 @@ def report_all_daily_records():
     food_records = format_records(food_records)
     personal_care_records = format_records(personal_care_records)
     cardex_records = format_records(cardex_records)
+    care_frequency_records = format_records(care_frequency_records)
 
     return render_template('report_all_daily_records.html', 
                             resident_initials=resident_initials, 
@@ -264,4 +282,40 @@ def report_all_daily_records():
                             fluid_records=fluid_records, 
                             food_records=food_records, 
                             personal_care_records=personal_care_records, 
-                            cardex_records=cardex_records)
+                            cardex_records=cardex_records,
+                            care_frequency_records=care_frequency_records)
+    
+    # c:/Users/Peter/Documents/Care-Home-4/app/reports/routes.py
+
+@bp.route('/report_care_frequency')
+def report_care_frequency():
+    resident_initials = request.args.get('resident_initials')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT timestamp, mattress_appropriate, cushion_appropriate, functionality_check, 
+               pressure_areas_checked, redness_present, position, incontinence_urine, 
+               incontinence_bowels, diet_intake, fluid_intake, supplement_intake, 
+               staff_initials, notes
+        FROM care_frequency_chart
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    data = cursor.fetchall()
+    conn.close()
+
+    # Format timestamps
+    formatted_data = []
+    for row in data:
+        row = list(row)
+        row[0] = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')
+        formatted_data.append(row)
+
+    return render_template('report_care_frequency.html', 
+                           resident_initials=resident_initials,
+                           start_date=start_date,
+                           end_date=end_date, 
+                           data=formatted_data)

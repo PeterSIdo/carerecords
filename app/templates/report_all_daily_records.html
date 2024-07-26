@@ -2,12 +2,25 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <style>
+        table, th, td {
+            border: 1px solid #ddd;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+
     <h3>Daily Records for {{ resident_initials }}</h3>
     <h4>from {{ start_date }} to {{ end_date }} </h4>
     <hr>
     <h3>Fluid Intake</h3>
-    <table>
-        <thead>
+    <table class="table table-striped">
+        <thead class="bg-light">
             <tr>
                 <th>Timestamp</th>
                 <th>Fluid Type</th>
@@ -31,8 +44,8 @@
 
     <hr>
     <h3>Food Intake</h3>
-    <table>
-        <thead>
+    <table class="table table-striped">
+        <thead class="bg-light">
             <tr>
                 <th>Timestamp</th>
                 <th>Food Type</th>
@@ -56,8 +69,8 @@
 
     <hr>
     <h3>Personal Care</h3>
-    <table>
-        <thead>
+    <table class="table table-striped">
+        <thead class="bg-light">
             <tr>
                 <th>Timestamp</th>
                 <th>Care Type</th>
@@ -81,8 +94,8 @@
 
     <hr>
     <h3>Cardex</h3>
-    <table>
-        <thead>
+    <table class="table table-striped">
+        <thead class="bg-light">
             <tr>
                 <th>Timestamp</th>
                 <th>Cardex Text</th>
@@ -95,6 +108,49 @@
                     <td>{{ record[0] }}</td>
                     <td>{{ record[1] }}</td>
                     <td>{{ record[2] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+    <h3>Care Frequency</h3>
+    <table class="table table-striped">
+        <thead class="bg-light">
+            <tr>
+                <th>Timestamp</th>
+                <th>Mattress Appropriate</th>
+                <th>Cushion Appropriate</th>
+                <th>Functionality Check</th>
+                <th>Pressure Areas Checked</th>
+                <th>Redness Present</th>
+                <th>Keep Moving</th>
+                <th>Incontinence Urine</th>
+                <th>Incontinence Bowels</th>
+                <th>Diet Intake</th>
+                <th>Fluid Intake</th>
+                <th>Supplement Intake</th>
+                <th>Staff Initials</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in care_frequency_records %}
+                <tr>
+                    <td>{{ record[0] }}</td>
+                    <td>{{ record[1] }}</td>
+                    <td>{{ record[2] }}</td>
+                    <td>{{ record[3] }}</td>
+                    <td>{{ record[4] }}</td>
+                    <td>{{ record[5] }}</td>
+                    <td>{{ record[6] }}</td>
+                    <td>{{ record[7] }}</td>
+                    <td>{{ record[8] }}</td>
+                    <td>{{ record[9] }}</td>
+                    <td>{{ record[10] }}</td>
+                    <td>{{ record[11] }}</td>
+                    <td>{{ record[12] }}</td>
+                    <td>{{ record[13] }}</td>
                 </tr>
             {% endfor %}
         </tbody>
