@@ -9,6 +9,20 @@
     <input type="hidden" name="resident_initials" value="{{ request.args.get('resident_initials') }}">
 
     <div class="form-group">
+        <label for="position"><strong>Position:</strong></label>
+        <div class="checkbox-group">
+            <input type="checkbox" id="position_right" name="position" value="Right" onclick="singleSelect(this)">
+            <label for="position_right">Right</label>
+            <input type="checkbox" id="position_left" name="position" value="Left" onclick="singleSelect(this)">
+            <label for="position_left">Left</label>
+            <input type="checkbox" id="position_back" name="position" value="Back" onclick="singleSelect(this)">
+            <label for="position_back">Back</label>
+            <input type="checkbox" id="position_chair" name="position" value="Chair" onclick="singleSelect(this)">
+            <label for="position_chair">Chair</label>
+        </div>
+    </div>
+    <hr>
+    <div class="form-group">
         <label for="mattress_appropriate"><strong>Mattress Appropriate:</strong></label>
         <div class="checkbox-group">
             <input type="checkbox" id="mattress_appropriate_yes" name="mattress_appropriate" value="yes" onclick="singleSelect(this)">
@@ -55,20 +69,6 @@
             <label for="redness_present_yes">Yes</label>
             <input type="checkbox" id="redness_present_no" name="redness_present" value="no" onclick="singleSelect(this)">
             <label for="redness_present_no">No</label>
-        </div>
-    </div>
-    <hr>
-    <div class="form-group">
-        <label for="position"><strong>Position:</strong></label>
-        <div class="checkbox-group">
-            <input type="checkbox" id="position_right" name="position" value="right" onclick="singleSelect(this)">
-            <label for="position_right">Right</label>
-            <input type="checkbox" id="position_left" name="position" value="left" onclick="singleSelect(this)">
-            <label for="position_left">Left</label>
-            <input type="checkbox" id="position_back" name="position" value="back" onclick="singleSelect(this)">
-            <label for="position_back">Back</label>
-            <input type="checkbox" id="position_chair" name="position" value="chair" onclick="singleSelect(this)">
-            <label for="position_chair">Chair</label>
         </div>
     </div>
     <hr>

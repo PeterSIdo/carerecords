@@ -200,92 +200,6 @@ def report_cardex():
                         resident_initials=resident_initials,
                         data=formatted_data)
 
-@bp.route('/report_all_daily_records')
-def report_all_daily_records():
-    resident_initials = request.args.get('resident_initials')
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-
-    conn = sqlite3.connect('care4.db')
-    cursor = conn.cursor()
-
-# Fetch records from fluid_chart
-    cursor.execute('''
-        SELECT timestamp, fluid_type, fluid_volume, fluid_note, staff_initials 
-        FROM fluid_chart 
-        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
-        ORDER BY timestamp ASC
-    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
-    fluid_records = cursor.fetchall()
-
-    # Fetch records from food_chart
-    cursor.execute('''
-        SELECT timestamp, food_type, food_amount, food_note, staff_initials 
-        FROM food_chart 
-        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
-        ORDER BY timestamp ASC
-    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
-    food_records = cursor.fetchall()
-
-    # Fetch records from personal_care_chart
-    cursor.execute('''
-        SELECT timestamp, personal_care_type, personal_care_duration, personal_care_note, staff_initials 
-        FROM personal_care_chart 
-        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
-        ORDER BY timestamp ASC
-    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
-    personal_care_records = cursor.fetchall()
-
-    # Fetch records from cardex_chart
-    cursor.execute('''
-        SELECT timestamp, cardex_text, staff_initials 
-        FROM cardex_chart 
-        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
-        ORDER BY timestamp ASC
-    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
-    cardex_records = cursor.fetchall()
-
-    # Initialize care_frequency_records to an empty list
-    care_frequency_records = []
-    
-    # Fetch records from care_frequency_chart
-    cursor.execute('''
-        SELECT timestamp, mattress_appropriate, cushion_appropriate, functionality_check, 
-               pressure_areas_checked, redness_present, position, incontinence_urine, 
-               incontinence_bowels, diet_intake, fluid_intake, supplement_intake, 
-               staff_initials, notes
-        FROM care_frequency_chart
-        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
-        ORDER BY timestamp ASC
-    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
-    care_frequency_records = cursor.fetchall()
-
-    conn.close()
-
-    # Format timestamps
-    def format_records(records):
-        formatted_records = []
-        for record in records:
-            record = list(record)
-            record[0] = datetime.strptime(record[0], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')
-            formatted_records.append(record)
-        return formatted_records
-
-    fluid_records = format_records(fluid_records)
-    food_records = format_records(food_records)
-    personal_care_records = format_records(personal_care_records)
-    cardex_records = format_records(cardex_records)
-    care_frequency_records = format_records(care_frequency_records)
-
-    return render_template('report_all_daily_records.html', 
-                            resident_initials=resident_initials, 
-                            start_date=start_date,
-                            end_date=end_date,
-                            fluid_records=fluid_records, 
-                            food_records=food_records, 
-                            personal_care_records=personal_care_records, 
-                            cardex_records=cardex_records,
-                            care_frequency_records=care_frequency_records)
     
     # c:/Users/Peter/Documents/Care-Home-4/app/reports/routes.py
 
@@ -353,3 +267,98 @@ def report_bowels():
                            start_date=start_date,
                            end_date=end_date, 
                            data=formatted_data)
+    
+@bp.route('/report_all_daily_records')
+def report_all_daily_records():
+    resident_initials = request.args.get('resident_initials')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+
+    # Fetch records from fluid_chart
+    cursor.execute('''
+        SELECT timestamp, fluid_type, fluid_volume, fluid_note, staff_initials 
+        FROM fluid_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    fluid_records = cursor.fetchall()
+
+    # Fetch records from food_chart
+    cursor.execute('''
+        SELECT timestamp, food_type, food_amount, food_note, staff_initials 
+        FROM food_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    food_records = cursor.fetchall()
+
+    # Fetch records from personal_care_chart
+    cursor.execute('''
+        SELECT timestamp, personal_care_type, personal_care_duration, personal_care_note, staff_initials 
+        FROM personal_care_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    personal_care_records = cursor.fetchall()
+
+    # Fetch records from cardex_chart
+    cursor.execute('''
+        SELECT timestamp, cardex_text, staff_initials 
+        FROM cardex_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    cardex_records = cursor.fetchall()
+
+    # Fetch records from care_frequency_chart
+    cursor.execute('''
+        SELECT timestamp, mattress_appropriate, cushion_appropriate, functionality_check, 
+               pressure_areas_checked, redness_present, position, incontinence_urine, 
+               incontinence_bowels, diet_intake, fluid_intake, supplement_intake, 
+               staff_initials, notes
+        FROM care_frequency_chart
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    care_frequency_records = cursor.fetchall()
+
+    # Fetch records from bowel_chart
+    cursor.execute('''
+        SELECT timestamp, bowel_type, bowel_size, bowel_mode, bowel_note, staff_initials 
+        FROM bowel_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    bowel_records = cursor.fetchall()
+
+    conn.close()
+
+    # Format timestamps
+    def format_records(records):
+        formatted_records = []
+        for record in records:
+            record = list(record)
+            record[0] = datetime.strptime(record[0], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')
+            formatted_records.append(record)
+        return formatted_records
+
+    fluid_records = format_records(fluid_records)
+    food_records = format_records(food_records)
+    personal_care_records = format_records(personal_care_records)
+    cardex_records = format_records(cardex_records)
+    care_frequency_records = format_records(care_frequency_records)
+    bowel_records = format_records(bowel_records)
+
+    return render_template('report_all_daily_records.html', 
+                            resident_initials=resident_initials, 
+                            start_date=start_date,
+                            end_date=end_date,
+                            fluid_records=fluid_records, 
+                            food_records=food_records, 
+                            personal_care_records=personal_care_records, 
+                            cardex_records=cardex_records,
+                            care_frequency_records=care_frequency_records,
+                            bowel_records=bowel_records)
