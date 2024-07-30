@@ -20,9 +20,9 @@
             </select>
         </div>
         <div class="form-group">
-            <label for="service_name">Select Service:</label>
+            <label for="service_name">Select Report:</label>
             <select id="service_name" name="service_name" required>
-                <option value="">Select Service</option>
+                <option value="">Select Report</option>
                 {% for service in services %}
                     <option value="{{ service[1] }}">{{ service[1] }}</option>
                 {% endfor %}

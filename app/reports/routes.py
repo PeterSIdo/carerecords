@@ -25,7 +25,7 @@ def report_selection():
             # Redirect to report_selection_logic blueprint with selected service and date range
             return redirect(url_for('reports.report_selection_logic', unit_name=unit_name, resident_initials=resident_initials, service_name=service_name, start_date=start_date, end_date=end_date))
         
-        # Fetch service list and unit list from the database
+        # Fetch report list and unit list from the database
         conn = sqlite3.connect('care4.db')
         cursor = conn.cursor()
         cursor.execute('SELECT id, report_name FROM report_list')
@@ -65,6 +65,8 @@ def report_selection_logic():
         return redirect(url_for('reports.report_cardex', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     elif service_name == 'care frequency chart':
         return redirect(url_for('reports.report_care_frequency', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
+    elif service_name == 'bowels observation':
+        return redirect(url_for('reports.report_bowels', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     elif service_name == 'all daily records': 
         return redirect(url_for('reports.report_all_daily_records', unit_name=unit_name, resident_initials=resident_initials, start_date=start_date, end_date=end_date))
     else:
@@ -315,6 +317,38 @@ def report_care_frequency():
         formatted_data.append(row)
 
     return render_template('report_care_frequency.html', 
+                           resident_initials=resident_initials,
+                           start_date=start_date,
+                           end_date=end_date, 
+                           data=formatted_data)
+    
+    # c:/Users/Peter/Documents/Care-Home-4/app/reports/routes.py
+
+@bp.route('/report_bowels')
+def report_bowels():
+    resident_initials = request.args.get('resident_initials')
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        SELECT resident_initials, timestamp, bowel_type, bowel_size, bowel_note, staff_initials 
+        FROM bowel_chart 
+        WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
+        ORDER BY timestamp ASC
+    ''', (resident_initials, start_date + ' 00:00:00', end_date + ' 23:59:59'))
+    data = cursor.fetchall()
+    conn.close()
+
+    # Convert timestamp strings to datetime objects
+    formatted_data = []
+    for row in data:
+        row = list(row)
+        row[1] = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%y %H:%M')  # Format without seconds
+        formatted_data.append(row)
+
+    return render_template('report_bowels.html', 
                            resident_initials=resident_initials,
                            start_date=start_date,
                            end_date=end_date, 

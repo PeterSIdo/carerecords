@@ -51,7 +51,9 @@ def data_collection_logic():
     elif service_name == 'cardex':
         return redirect(url_for('data_collection.cardex', unit_name=unit_name, resident_initials=resident_initials))
     elif service_name == 'care frequency':
-        return redirect(url_for('data_collection.care_frequency', unit_name=unit_name, resident_initials=resident_initials))    
+        return redirect(url_for('data_collection.care_frequency', unit_name=unit_name, resident_initials=resident_initials))
+    elif service_name == 'bowels observation':
+        return redirect(url_for('data_collection.bowel_observation', unit_name=unit_name, resident_initials=resident_initials))    
     else:
         return redirect(url_for('data_collection.collect_data'))
 
@@ -316,3 +318,54 @@ def submit_care_frequency():
 
     flash('Care frequency data submitted successfully!', 'success')
     return redirect(url_for('main.carer_menu'))
+
+@bp.route('/bowel_observation')
+def bowel_observation():
+    unit_name = request.args.get('unit_name')
+    resident_initials = request.args.get('resident_initials')
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT id, bowel_name, bowel_size FROM bowel_list')
+    bowel_list = cursor.fetchall()
+    conn.close()
+    return render_template('bowel_observation_form.html', bowel_list=bowel_list, unit_name=unit_name, resident_initials=resident_initials)
+
+@bp.route('/submit_bowel_observation', methods=['POST'])
+def submit_bowel_observation():
+    resident_initials = request.form.get('resident_initials')
+    bowel_type = request.form.get('bowel_type')
+    bowel_size = request.form.get('bowel_size')
+    bowel_note = request.form.get('bowel_note')
+    input_time = request.form.get('input_time')
+    staff_initials = request.form.get('staff_initials').upper()
+    timestamp = datetime.now().strftime('%Y-%m-%d') + ' ' + input_time + ':00'
+
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT 1 FROM staff WHERE staff_initials = ?', (staff_initials,))
+    if cursor.fetchone() is None:
+        conn.close()
+        flash('Invalid staff initials. Please check and try again.', 'amber')
+        return redirect(url_for('data_collection.bowel_observation', unit_name=request.form.get('unit_name'), resident_initials=resident_initials))
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS bowel_chart (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            resident_initials TEXT,
+            timestamp TEXT,
+            bowel_type TEXT,
+            bowel_size TEXT,
+            bowel_note TEXT,
+            staff_initials TEXT
+        )
+    ''')
+    cursor.execute('''
+        INSERT INTO bowel_chart (resident_initials, timestamp, bowel_type, bowel_size, bowel_note, staff_initials)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ''', (resident_initials, timestamp, bowel_type, bowel_size, bowel_note, staff_initials))
+    conn.commit()
+    conn.close()
+
+    flash('Bowel observation recorded successfully!', 'success')
+    return redirect(url_for('main.carer_input'))
