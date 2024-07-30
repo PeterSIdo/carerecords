@@ -325,7 +325,7 @@ def bowel_observation():
     resident_initials = request.args.get('resident_initials')
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT id, bowel_name, bowel_size FROM bowel_list')
+    cursor.execute('SELECT id, bowel_name, bowel_size, bowel_mode FROM bowel_list')
     bowel_list = cursor.fetchall()
     conn.close()
     return render_template('bowel_observation_form.html', bowel_list=bowel_list, unit_name=unit_name, resident_initials=resident_initials)
@@ -335,6 +335,7 @@ def submit_bowel_observation():
     resident_initials = request.form.get('resident_initials')
     bowel_type = request.form.get('bowel_type')
     bowel_size = request.form.get('bowel_size')
+    bowel_mode = request.form.get('bowel_mode')
     bowel_note = request.form.get('bowel_note')
     input_time = request.form.get('input_time')
     staff_initials = request.form.get('staff_initials').upper()
@@ -356,14 +357,15 @@ def submit_bowel_observation():
             timestamp TEXT,
             bowel_type TEXT,
             bowel_size TEXT,
+            bowel_mode TEXT,
             bowel_note TEXT,
             staff_initials TEXT
         )
     ''')
     cursor.execute('''
-        INSERT INTO bowel_chart (resident_initials, timestamp, bowel_type, bowel_size, bowel_note, staff_initials)
-        VALUES (?, ?, ?, ?, ?, ?)
-    ''', (resident_initials, timestamp, bowel_type, bowel_size, bowel_note, staff_initials))
+        INSERT INTO bowel_chart (resident_initials, timestamp, bowel_type, bowel_size, bowel_mode, bowel_note, staff_initials)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (resident_initials, timestamp, bowel_type, bowel_size, bowel_mode, bowel_note, staff_initials))
     conn.commit()
     conn.close()
 

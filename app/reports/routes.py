@@ -333,7 +333,7 @@ def report_bowels():
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT resident_initials, timestamp, bowel_type, bowel_size, bowel_note, staff_initials 
+        SELECT resident_initials, timestamp, bowel_type, bowel_size, bowel_mode, bowel_note, staff_initials 
         FROM bowel_chart 
         WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
         ORDER BY timestamp ASC
