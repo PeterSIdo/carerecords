@@ -6,9 +6,9 @@ def create_table():
     cursor = conn.cursor()
 
     create_table_sql = '''
-    CREATE TABLE IF NOT EXISTS bm_list (
+    CREATE TABLE IF NOT EXISTS residents_observations_list (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        bm_name TEXT
+        observation_name TEXT
     )
     '''
 

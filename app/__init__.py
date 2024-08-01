@@ -31,5 +31,8 @@ def create_app(config_class=Config):
     
     from app.admin import bp as admin_bp
     app.register_blueprint(admin_bp)
+    
+    from app.staff_board import bp as staff_board_bp
+    app.register_blueprint(staff_board_bp, url_prefix='/staff_board')
 
     return app
