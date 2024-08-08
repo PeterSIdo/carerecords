@@ -74,3 +74,47 @@ def list_all_residents():
     residents = cursor.fetchall()
     conn.close()
     return render_template('list_all_residents.html', residents=residents)
+
+@bp.route('/residents_observations_input', methods=['GET', 'POST'])
+def residents_observations_input():
+    if request.method == 'POST':
+        # Collect form data
+        resident_initials = request.form.get('resident_initials')
+        unit_name = request.form.get('unit_name')
+        observation_name = request.form.get('observation_name')
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+        observation_reason = request.form.get('observation_reason')
+        observation_notes = request.form.get('observation_notes')   
+        staff_initials = request.form.get('staff_initials')
+        
+        # Validate form data
+        if not (resident_initials and unit_name):
+            flash('Please fill out all required fields.')
+            return redirect(url_for('staff_board.residents_observations_input'))
+
+        # Insert data into the database
+        conn = sqlite3.connect('care4.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO residents_observations_chart (
+                resident_initials, unit_name, observation_name, start_date, end_date, observation_reason, observation_notes, staff_initials
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (resident_initials, unit_name, observation_name, start_date, end_date, observation_reason, observation_notes, staff_initials))
+        conn.commit()
+        conn.close()
+
+        flash('Observation recorded successfully!', 'success')
+        return redirect(url_for('admin.residents_observations_input'))
+
+    # Fetch unit names from the database
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT DISTINCT unit_name FROM units')
+    units = cursor.fetchall()
+    
+    cursor.execute('SELECT DISTINCT observation_name FROM residents_observations_list')
+    observations = cursor.fetchall()
+    conn.close()
+
+    return render_template('residents_observations_input.html', units=units, observations=observations)
