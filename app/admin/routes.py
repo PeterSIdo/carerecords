@@ -10,6 +10,7 @@ from app.login_check import login_required
 def admin_dashboard():
     return render_template('admin_dashboard.html')
 
+# c:/Users/Peter/Documents/Care-Home-4/app/admin/routes.py
 @bp.route('/enter_resident', methods=['GET', 'POST'])
 def enter_resident():
     if 'logged_in' in session and session['logged_in'] and session.get('user_mode') == 'a':
@@ -118,3 +119,34 @@ def residents_observations_input():
     conn.close()
 
     return render_template('residents_observations_input.html', units=units, observations=observations)
+
+# Filter and re-submit residents by Unit name and Room number
+@bp.route('/filter_and_resubmit_residents', methods=['GET'])
+def filter_and_resubmit_residents():
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    
+    # Read all rows from the residents table
+    cursor.execute('SELECT resident_name, resident_surname, unit_name, room_nr, resident_initials FROM residents')
+    residents = cursor.fetchall()
+    
+    # Sort the table by Unit name and Room nr
+    residents_sorted = sorted(residents, key=lambda x: (x[2], x[3]))
+    
+    # Clear the table
+    cursor.execute('DELETE FROM residents')
+    
+        
+    # Reset the id sequence
+    cursor.execute('DELETE FROM sqlite_sequence WHERE name="residents"')
+    
+    # Re-insert the sorted data without the id column
+    for resident in residents_sorted:
+        cursor.execute('INSERT INTO residents (resident_name, resident_surname, unit_name, room_nr, resident_initials) VALUES (?, ?, ?, ?, ?)', resident)
+        
+    # Commit changes and close session
+    conn.commit()
+    conn.close()
+    
+    flash('Residents have been filtered and re-submitted successfully!', 'success')
+    return redirect(url_for('admin.list_all_residents'))
