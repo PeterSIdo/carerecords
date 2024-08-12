@@ -124,7 +124,7 @@ def report_food():
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT resident_initials, timestamp, food_type, food_amount, food_note, staff_initials 
+        SELECT resident_initials, timestamp, food_name, food_amount, food_note, staff_initials 
         FROM food_chart 
         WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
         ORDER BY timestamp ASC
@@ -288,7 +288,7 @@ def report_all_daily_records():
 
     # Fetch records from food_chart
     cursor.execute('''
-        SELECT timestamp, food_type, food_amount, food_note, staff_initials 
+        SELECT timestamp, food_name, food_amount, food_note, staff_initials 
         FROM food_chart 
         WHERE resident_initials = ? AND timestamp BETWEEN ? AND ?
         ORDER BY timestamp ASC

@@ -127,7 +127,7 @@ def food_intake():
 @bp.route('/submit_food_intake', methods=['POST'])
 def submit_food_intake():
     resident_initials = request.form.get('resident_initials')
-    food_type = request.form.get('food_type')
+    food_name = request.form.get('food_name')  # Updated variable name
     food_volume = request.form.get('food_volume')
     food_note = request.form.get('food_note')
     input_time = request.form.get('input_time')  # Retrieve input_time from the form data
@@ -149,16 +149,16 @@ def submit_food_intake():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             resident_initials TEXT,
             timestamp TEXT,
-            food_type TEXT,
+            food_name TEXT,
             food_volume INTEGER,
             food_note TEXT,
             staff_initials TEXT
         )
     ''')
     cursor.execute('''
-        INSERT INTO food_chart (resident_initials, timestamp, food_type, food_amount, food_note, staff_initials)
+        INSERT INTO food_chart (resident_initials, timestamp, food_name, food_amount, food_note, staff_initials)
         VALUES (?, ?, ?, ?, ?, ?)
-    ''', (resident_initials, timestamp, food_type, food_volume, food_note, staff_initials))
+    ''', (resident_initials, timestamp, food_name, food_volume, food_note, staff_initials))
     conn.commit()
     conn.close()
 

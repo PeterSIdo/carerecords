@@ -8,7 +8,6 @@
     <table>
         <thead>
             <tr>
-               
                 <th>Date/Time</th>
                 <th>Food</th>
                 <th>Amount</th>
@@ -19,9 +18,8 @@
         <tbody>
             {% for row in data %}
                 <tr>
-                    
                     <td>{{ row[1] }}</td>
-                    <td>{{ row[2] }}</td>
+                    <td>{{ row[2] }}</td> <!-- Ensure this matches the new column name in the database -->
                     <td>{{ row[3] }}</td>
                     <td>{{ row[4] }}</td>
                     <td>{{ row[5] }}</td>

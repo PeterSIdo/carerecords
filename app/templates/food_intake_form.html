@@ -7,8 +7,8 @@
         <input type="hidden" name="unit_name" value="{{ request.args.get('unit_name') }}">
         <input type="hidden" name="resident_initials" value="{{ request.args.get('resident_initials') }}">
         <div class="form-group">
-            <label for="food_type">Food Type:</label>
-            <select id="food_type" name="food_type" required>
+            <label for="food_name">Food Name:</label> <!-- Updated label -->
+            <select id="food_name" name="food_name" required> <!-- Updated id and name -->
                 {% for food in food_list %}
                     <option value="{{ food[1] }}">{{ food[1] }}</option>
                 {% endfor %}
