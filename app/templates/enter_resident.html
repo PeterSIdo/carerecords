@@ -11,7 +11,10 @@
         {% if confirm %}
             <input type="hidden" name="confirm" value="Sure">
             <p class="warning">This unit and room number are already occupied. Are you sure you want to overwrite?</p>
+            <button type="submit" name="action" value="overwrite">Overwrite</button>
+            <button type="submit" name="action" value="cancel">Cancel</button>
+        {% else %}
+            <button type="submit">Submit</button>
         {% endif %}
-        <button type="submit">Submit</button>
     </form>
 {% endblock %}

@@ -4,6 +4,7 @@ from app.admin import bp  # Ensure this import is correct
 import sqlite3
 from datetime import datetime
 from app.login_check import login_required
+from app.utils import generate_unique_id  # Import the function from utils.py
 
 @bp.route('/admin_dashboard')
 @login_required(user_mode='a')
@@ -19,6 +20,7 @@ def enter_resident():
             resident_surname = request.form.get('resident_surname')
             unit_name = request.form.get('unit_name')
             room_nr = request.form.get('room_nr')
+            action = request.form.get('action')
 
             # Convert room_nr to an integer
             try:
@@ -26,44 +28,58 @@ def enter_resident():
             except ValueError:
                 flash('Room number must be an integer.')
                 return redirect(url_for('admin.enter_resident'))
-            
-            # Calculate resident initials
-            initials = resident_name[0].upper() + resident_surname[0].upper()
-            resident_initials = f"{unit_name}{room_nr:02d}{initials}"
-            
+
             # Connect to the database
             conn = sqlite3.connect('care4.db')
             cursor = conn.cursor()
 
-            # Check for duplicates
-            cursor.execute('SELECT id FROM residents WHERE unit_name = ? AND room_nr = ?', (unit_name, room_nr))
+            # Check if the unit name and room number already exist
+            cursor.execute('SELECT * FROM residents WHERE unit_name = ? AND room_nr = ?', (unit_name, room_nr))
             existing_resident = cursor.fetchone()
 
-            if existing_resident:
-                # Duplicate found, prompt for confirmation
-                if request.form.get('confirm') == 'Sure':
-                    # User confirmed, overwrite the existing record
-                    cursor.execute('UPDATE residents SET resident_name = ?, resident_surname = ?, resident_initials = ? WHERE id = ?', 
-                                   (resident_name, resident_surname, resident_initials, existing_resident[0]))
-                    flash('Resident record updated successfully!')
-                else:
-                    # Prompt user for confirmation
-                    flash('Are you sure you want to overwrite?', 'warning')
-                    return render_template('enter_resident.html', confirm=True, resident_name=resident_name, resident_surname=resident_surname, unit_name=unit_name, room_nr=room_nr)
-            else:
-                # No duplicate, insert new record
-                cursor.execute('INSERT INTO residents (resident_name, resident_surname, unit_name, room_nr, resident_initials) VALUES (?, ?, ?, ?, ?)', 
-                               (resident_name, resident_surname, unit_name, room_nr, resident_initials))
-                flash('Resident added successfully!')
+            if existing_resident and action != 'overwrite':
+                # If resident exists and action is not overwrite, ask for confirmation
+                conn.close()
+                return render_template('enter_resident.html', resident_name=resident_name, resident_surname=resident_surname, unit_name=unit_name, room_nr=room_nr, confirm=True)
 
-            # Commit changes and close connection
+            if action == 'cancel':
+                # If action is cancel, redirect to the form without changes
+                conn.close()
+                return redirect(url_for('admin.enter_resident'))
+
+            # Calculate resident initials
+            initials = resident_name[0].upper() + resident_surname[0].upper()
+            resident_initials = f"{unit_name}{room_nr:02d}{initials}"
+
+            # Generate unique ID
+            resident_unique_id = generate_unique_id(resident_name, resident_surname)
+
+            if existing_resident:
+                # If overwriting, update the existing record
+                cursor.execute('''
+                    UPDATE residents
+                    SET resident_name = ?, resident_surname = ?, resident_initials = ?, resident_unique_id = ?
+                    WHERE unit_name = ? AND room_nr = ?
+                ''', (resident_name, resident_surname, resident_initials, resident_unique_id, unit_name, room_nr))
+            else:
+                # Insert new resident data into the database
+                cursor.execute('''
+                    INSERT INTO residents (resident_unique_id, resident_name, resident_surname, unit_name, room_nr, resident_initials)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (resident_unique_id, resident_name, resident_surname, unit_name, room_nr, resident_initials))
+                
+            # Insert data into resident_identifiers table
+            cursor.execute('''
+                INSERT INTO resident_identifiers (resident_unique_id, resident_name, resident_surname)
+                VALUES (?, ?, ?)
+            ''', (resident_unique_id, resident_name, resident_surname))
+
             conn.commit()
             conn.close()
 
+            flash('Resident added successfully.', 'success')
             return redirect(url_for('admin.enter_resident'))
-
-        return render_template('enter_resident.html')
-    return redirect(url_for('login.login'))
+    return render_template('enter_resident.html')
 
 
 @bp.route('/list_all_residents')
