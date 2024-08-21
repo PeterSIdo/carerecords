@@ -5,6 +5,19 @@ import sqlite3
 from datetime import datetime
 from app.login_check import login_required
 
+import speech_recognition as sr
+# c:/Users/Peter/Documents/Care-Home-4/app/data_collection/routes.py
+
+@bp.route('/process_audio', methods=['POST'])
+def process_audio():
+    audio_file = request.files['audio']
+    # Assuming voice_to_text.py has a function `transcribe_audio` to process the audio file
+    from SpeechRecog.voice_to_text import transcribe_audio
+    recognized_text = transcribe_audio(audio_file)
+    return jsonify({'recognized_text': recognized_text})
+
+
+
 @bp.route('/collect_data')
 @login_required()
 def collect_data():
