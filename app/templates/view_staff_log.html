@@ -12,6 +12,8 @@
                 <th>Suggested Completion Time</th>
                 <th>Initiator</th>
                 <th>Completer</th>
+                <th>Task Completed</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +26,8 @@
                     <td>{{ log[4] }}</td>
                     <td>{{ log[5] }}</td>
                     <td>{{ log[6] }}</td>
+                    <td>{{ 'Yes' if log[7] else 'No' }}</td>
+                    <td><a href="{{ url_for('staff_log.update_staff_log', log_id=log[0]) }}">Edit</a></td>
                 </tr>
             {% endfor %}
         </tbody>

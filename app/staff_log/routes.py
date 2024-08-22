@@ -87,3 +87,30 @@ def submit_staff_log():
 
     flash('New staff log entry created successfully!', 'success')
     return redirect(url_for('staff_log.view_staff_log'))
+
+@bp.route('/update_staff_log/<log_id>', methods=['GET', 'POST'])
+def update_staff_log(log_id):
+    if request.method == 'POST':
+        completer = request.form['completer']
+        task_completed = request.form.get('task_completed', 'off') == 'on'
+
+        conn = sqlite3.connect('care4.db')
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE staff_log
+            SET completer = ?, task_completed = ?
+            WHERE id = ?
+        ''', (completer, task_completed, log_id))
+        conn.commit()
+        conn.close()
+
+        flash('Staff log entry updated successfully!', 'success')
+        return redirect(url_for('staff_log.view_staff_log'))
+
+    conn = sqlite3.connect('care4.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM staff_log WHERE id = ?', (log_id,))
+    log = cursor.fetchone()
+    conn.close()
+
+    return render_template('update_staff_log.html', log=log)
