@@ -29,7 +29,7 @@ def create_staff_log():
     if request.method == 'POST':
         entry_category = request.form['entry_category']
         description = request.form['description']
-        suggested_completion_time = request.form['suggested_completion_time']
+        suggested_completion_time = request.form['suggested_completion_time']      
         initiator = request.form['initiator']
         completer = request.form.get('completer', '')
 
@@ -47,21 +47,46 @@ def create_staff_log():
 
     return render_template('create_staff_log.html')
 
-@bp.route('/view_staff_log')
+@bp.route('/view_staff_log', methods=['GET'])
 def view_staff_log():
+    # Get filter parameters from request arguments
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    task_completed = request.args.get('task_completed')  # 'all', 'completed', 'not_completed'
+
+    # Connect to the database
     conn = sqlite3.connect('care4.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM staff_log')
+
+    # Build the base query
+    query = 'SELECT * FROM staff_log WHERE 1=1'
+    params = []
+
+    # Add date filtering
+    if start_date and end_date:
+        query += ' AND timestamp BETWEEN ? AND ?'
+        params.extend([start_date, end_date])
+
+    # Add task completion filtering
+    if task_completed == 'completed':
+        query += ' AND task_completed = 1'
+    elif task_completed == 'not_completed':
+        query += ' AND task_completed = 0'
+
+    # Execute the query
+    cursor.execute(query, params)
     logs = cursor.fetchall()
     conn.close()
-    return render_template('view_staff_log.html', logs=logs)
 
-from flask import request, redirect, url_for, flash
+    # Format the suggested_completion_time
+    formatted_logs = []
+    for log in logs:
+        log = list(log)
+        log[4] = datetime.strptime(log[4], '%Y-%m-%dT%H:%M').strftime('%d-%m-%Y %H:%M') 
+        formatted_logs.append(log)
 
-from flask import request, redirect, url_for, flash
-import sqlite3
-from datetime import datetime
-import uuid
+    return render_template('view_staff_log.html', logs=formatted_logs)
+
 
 @bp.route('/submit_staff_log', methods=['POST'])
 def submit_staff_log():
