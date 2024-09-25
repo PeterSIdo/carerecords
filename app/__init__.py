@@ -2,13 +2,13 @@
 from flask import Flask, session,render_template
 from config import Config
 from datetime import datetime
-from flask_bootstrap import Bootstrap5
+from flask_bootstrap import Bootstrap
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
     
-    Bootstrap5(app)  # Initialize Flask-Bootstrap
+    Bootstrap(app)  # Initialize Flask-Bootstrap
         
     @app.before_request
     def set_current_time():
