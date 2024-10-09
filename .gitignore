@@ -1,3 +1,5 @@
+__pycache__/
+venv/
 code_flow.txt
 data_collection_logic.txt
 google deployment details.txt
